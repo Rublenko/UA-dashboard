@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Архітектурна схема даних</title>
+    <title>Архітектурна схема даних з прикладами</title>
     <style>
         :root {
             --bg-color: #0f172a;
@@ -181,6 +181,25 @@
         }
         .close-btn:hover { color: var(--text-main); }
 
+        .drawer-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+        }
+
+        @media(max-width: 1200px) {
+            .drawer-grid { grid-template-columns: 1fr; }
+        }
+
+        .drawer-section-title {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 0.75rem;
+        }
+
         table.detail-table {
             width: 100%;
             border-collapse: collapse;
@@ -189,7 +208,7 @@
         }
 
         table.detail-table th, table.detail-table td {
-            padding: 0.65rem 0.9rem;
+            padding: 0.6rem 0.8rem;
             border-bottom: 1px solid var(--border-color);
         }
 
@@ -204,9 +223,9 @@
 <body>
 
     <div class="top-bar">
-        <h2>Архітектурна схема зв'язків даних (коридорний маршрут за ескізом)</h2>
+        <h2>Архітектурна схема даних (з інтерактивними прикладами таблиць)</h2>
         <div class="sync-badge">
-            <span>⚡ ТОЧНЕ ПОПАДАННЯ ПО ЗЕЛЕНІЙ ЛІНІЇ</span>
+            <span>⚡ МОДУЛЬ ЯКОСТІ ОНОВЛЕНО ЗА СКРИНШОТОМ</span>
         </div>
     </div>
 
@@ -281,66 +300,101 @@
             <span id="drawer-title" class="drawer-title">Деталі таблиці</span>
             <button class="close-btn" onclick="closeDrawer()">✕</button>
         </div>
-        <div id="drawer-content"></div>
+        <div class="drawer-grid">
+            <div>
+                <div class="drawer-section-title">Специфікація полів та типи</div>
+                <div id="drawer-spec-content"></div>
+            </div>
+            <div>
+                <div class="drawer-section-title">Фактичний вигляд даних (Зразок з таблиці)</div>
+                <div id="drawer-preview-content"></div>
+            </div>
+        </div>
     </div>
 
     <script>
         const tableDetails = {
+            quality: {
+                title: "Деталі модуля: Модуль оцінки якості",
+                specHeaders: ["Поле", "Тип даних", "Опис"],
+                specRows: [
+                    ["IDF", "INT [FK]", "Ідентифікатор запису"],
+                    ["CSI", "DECIMAL(5,4)", "Індекс задоволеності клієнтів"],
+                    ["NPS", "DECIMAL(6,4)", "Індекс споживчої лояльності"],
+                    ["Кількість відгуків", "INT", "Сумарна кількість оцінок"]
+                ],
+                previewHeaders: ["IDF", "CSI", "NPS", "Кількість відгуків"],
+                previewRows: [
+                    ["SN25000022", "99,852", "99,3212", "22984"],
+                    ["SN23000002", "99,1955", "96,9684", "14545"],
+                    ["SN17000013", "98,9921", "94,9291", "3175"],
+                    ["SN02000053", "99,9299", "99,4395", "2855"],
+                    ["SN09000139", "99,8719", "99,1887", "2342"],
+                    ["SN09000018", "93,8314", "84,1876", "2302"],
+                    ["SN23000443", "99,8944", "99,3664", "1894"],
+                    ["SN07000005", "99,3456", "96,6091", "1681"]
+                ]
+            },
             hromadas: {
                 title: "Деталі довідника: Перелік громад",
-                headers: ["Поле", "Тип даних", "Опис / Зв'язок"],
-                rows: [
-                    ["область", "VARCHAR(100)", "Адміністративна область розташування"],
-                    ["район", "VARCHAR(100)", "Район в межах області"],
-                    ["громада", "VARCHAR(150)", "Назва територіальної громади"],
-                    ["COD громади", "VARCHAR(50) [PK]", "Унікальний кодифікатор громади"]
+                specHeaders: ["Поле", "Тип даних", "Опис"],
+                specRows: [
+                    ["область", "VARCHAR(100)", "Адміністративна область"],
+                    ["район", "VARCHAR(100)", "Район області"],
+                    ["громада", "VARCHAR(150)", "Назва громади"],
+                    ["COD громади", "VARCHAR(50) [PK]", "Унікальний код"]
+                ],
+                previewHeaders: ["область", "район", "громада", "COD громади"],
+                previewRows: [
+                    ["Київська", "Броварський", "Броварська міська", "UA3202001"],
+                    ["Львівська", "Львівський", "Львівська міська", "UA4606001"],
+                    ["Одеській", "Одеський", "Одеська міська", "UA5110001"]
                 ]
             },
             prebooking: {
                 title: "Деталі модуля: Підсистема попереднього запису",
-                headers: ["Поле", "Тип даних", "Опис / Зв'язок"],
-                rows: [
-                    ["IDF", "INT [PK]", "Ідентифікатор запису"],
-                    ["Зареєстровано", "INT", "Кількість записів"],
-                    ["Не відбулося", "INT", "Пропущені візити"],
-                    ["Завершені", "INT", "Обслуговувані громадяни"],
-                    ["Скасовані", "INT", "Скасовані користувачем"]
+                specHeaders: ["Поле", "Тип даних", "Опис"],
+                specRows: [
+                    ["IDF", "INT [PK]", "ID запису"],
+                    ["Зареєстровано", "INT", "Кількість реєстрацій"],
+                    ["Не відбулося", "INT", "Пропущено"],
+                    ["Завершені", "INT", "Оброблено"],
+                    ["Скасовані", "INT", "Скасовано"]
+                ],
+                previewHeaders: ["IDF", "Зареєстровано", "Не відбулося", "Завершені", "Скасовані"],
+                previewRows: [
+                    ["SN25000022", "120", "5", "110", "5"],
+                    ["SN23000002", "85", "2", "80", "3"]
                 ]
             },
             monitoring: {
                 title: "Деталі таблиці: Статичний моніторинг",
-                headers: ["Поле", "Тип даних", "Опис / Зв'язок"],
-                rows: [
-                    ["IDF", "INT [FK]", "Зв'язок з попереднього запису"],
-                    ["COD громади", "VARCHAR(50) [FK]", "Зв'язок з Перелік громад"],
-                    ["Наявність ІС", "BOOLEAN", "Статус інтернет-мережі"],
-                    ["Загальна кількість послуг", "INT", "Сумарний показник"],
-                    ["Загальна кількість послуг згідно 1226", "INT", "Послуги за регламентом №1226"],
-                    ["Загальна кількість послуг наданих мобільним ЦНАП", "INT", "Виїзний сервіс"]
-                ]
-            },
-            quality: {
-                title: "Деталі модуля: Модуль оцінки якості",
-                headers: ["Поле", "Тип даних", "Опис / Зв'язок"],
-                rows: [
-                    ["IDF", "INT [FK]", "Зв'язок по ключу IDF"],
-                    ["CSI", "DECIMAL(5,2)", "Індекс задоволеності (CSI)"],
-                    ["NPS", "DECIMAL(5,2)", "Індекс лояльності (NPS)"],
-                    ["Кількість відгуків", "INT", "Загальна кількість оцінок"]
+                specHeaders: ["Поле", "Тип даних", "Опис"],
+                specRows: [
+                    ["IDF", "INT [FK]", "Зв'язок"],
+                    ["COD громади", "VARCHAR(50) [FK]", "Код громади"],
+                    ["Наявність ІС", "BOOLEAN", "Інтернет-мережа"],
+                    ["Загальна кількість послуг", "INT", "Всього послуг"]
+                ],
+                previewHeaders: ["IDF", "COD громади", "Наявність ІС", "Загальна к-сть"],
+                previewRows: [
+                    ["SN25000022", "UA3202001", "true", "4500"],
+                    ["SN23000002", "UA4606001", "true", "3100"]
                 ]
             },
             transactions: {
-                title: "Деталі таблиці: Динамічний журнал послуг (транзакції)",
-                headers: ["Поле в Tableau", "Тип даних", "Опис сирого потоку"],
-                rows: [
-                    ["Transaction ID", "UUID [PK]", "Унікальний ідентифікатор кожної окремої транзакції"],
-                    ["COD громади", "VARCHAR(50) [FK]", "Зв'язок зі Статичним моніторингом"],
-                    ["admin_1", "VARCHAR(100)", "Область (мітка з рядків Tableau)"],
-                    ["admin_3", "VARCHAR(100)", "Район/Громада (деталізація рядків)"],
-                    ["theme", "VARCHAR(150)", "Тематика послуг (Земля та екологія тощо)"],
-                    ["service_name", "VARCHAR(255)", "Повна конкретна назва послуги"],
-                    ["Quarter(create...)", "VARCHAR(20)", "Часовий зріз (квартал надання)"],
-                    ["result", "VARCHAR(50)", "Статус виконання (надано/вчасно, прострочено тощо)"]
+                title: "Деталі таблиці: Динамічний журнал послуг (Tableau)",
+                specHeaders: ["Поле в Tableau", "Тип даних", "Опис"],
+                specRows: [
+                    ["Transaction ID", "UUID [PK]", "Унікальний ID"],
+                    ["COD громади", "VARCHAR(50) [FK]", "Код громади"],
+                    ["admin_1", "VARCHAR(100)", "Область"],
+                    ["result", "VARCHAR(50)", "Статус"]
+                ],
+                previewHeaders: ["Transaction ID", "COD громади", "admin_1", "result"],
+                previewRows: [
+                    ["a1b2-c3d4", "UA3202001", "Київська", "надано"],
+                    ["e5f6-g7h8", "UA4606001", "Львівська", "прострочено"]
                 ]
             }
         };
@@ -367,16 +421,14 @@
                 const r1 = el1.getBoundingClientRect();
                 const r2 = el2.getBoundingClientRect();
 
-                const x1 = r1.left - wRect.left; // Лівий край рядка "Попереднього запису"
+                const x1 = r1.left - wRect.left;
                 const y1 = r1.top + r1.height / 2 - wRect.top;
-                const x2 = r2.left - wRect.left; // Лівий край рядка "Статичного моніторингу"
+                const x2 = r2.left - wRect.left;
                 const y2 = r2.top + r2.height / 2 - wRect.top;
 
                 let pathData = "";
 
                 if (conn.route === 'corridor-left') {
-                    // Коридор проходить рівно між правим краєм "Переліку громад" (~340px) і лівими краями карток (~380px)
-                    // Тобто ковзає в проміжку біля X = 350-355
                     const corridorX = 355;
                     pathData = `M ${x1} ${y1} C ${corridorX} ${y1}, ${corridorX} ${y2}, ${x2} ${y2}`;
                 } else if (conn.route === 'bottom-around-quality') {
@@ -417,17 +469,31 @@
             if (!data) return;
 
             document.getElementById('drawer-title').innerText = data.title;
-            let html = `<table class="detail-table"><thead><tr>`;
-            data.headers.forEach(h => html += `<th>${h}</th>`);
-            html += `</tr></thead><tbody>`;
-            data.rows.forEach(row => {
-                html += `<tr>`;
-                row.forEach(cell => html += `<td>${cell}</td>`);
-                html += `</tr>`;
-            });
-            html += `</tbody></table>`;
 
-            document.getElementById('drawer-content').innerHTML = html;
+            // Генерація специфікації (ліва колонка)
+            let specHtml = `<table class="detail-table"><thead><tr>`;
+            data.specHeaders.forEach(h => specHtml += `<th>${h}</th>`);
+            specHtml += `</tr></thead><tbody>`;
+            data.specRows.forEach(row => {
+                specHtml += `<tr>`;
+                row.forEach(cell => specHtml += `<td>${cell}</td>`);
+                specHtml += `</tr>`;
+            });
+            specHtml += `</tbody></table>`;
+            document.getElementById('drawer-spec-content').innerHTML = specHtml;
+
+            // Генерація зразка даних (права колонка)
+            let prevHtml = `<table class="detail-table"><thead><tr>`;
+            data.previewHeaders.forEach(h => prevHtml += `<th>${h}</th>`);
+            prevHtml += `</tr></thead><tbody>`;
+            data.previewRows.forEach(row => {
+                prevHtml += `<tr>`;
+                row.forEach(cell => prevHtml += `<td>${cell}</td>`);
+                prevHtml += `</tr>`;
+            });
+            prevHtml += `</tbody></table>`;
+            document.getElementById('drawer-preview-content').innerHTML = prevHtml;
+
             document.getElementById('info-drawer').classList.add('open');
         }
 

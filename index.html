@@ -204,9 +204,9 @@
 <body>
 
     <div class="top-bar">
-        <h2>Архітектурна схема зв'язків даних (ідеальний обхід ліворуч та знизу)</h2>
+        <h2>Архітектурна схема зв'язків даних (повністю чистий маршрут обходу)</h2>
         <div class="sync-badge">
-            <span>⚡ ІДЕАЛЬНЕ ВИПРАВЛЕННЯ</span>
+            <span>⚡ ПОВНІСТЮ ВИПРАВЛЕНО</span>
         </div>
     </div>
 
@@ -347,7 +347,7 @@
 
         const connections = [
             { fromRow: 'row-hromadas-cod', toRow: 'row-monitoring-cod', cardFrom: 'card-hromadas', cardTo: 'card-monitoring', route: 'straight' },
-            { fromRow: 'row-prebooking-idf', toRow: 'row-monitoring-idf', cardFrom: 'card-prebooking', cardTo: 'card-monitoring', route: 'left-bypass' },
+            { fromRow: 'row-prebooking-idf', toRow: 'row-monitoring-idf', cardFrom: 'card-prebooking', cardTo: 'card-monitoring', route: 'far-left-bypass' },
             { fromRow: 'row-prebooking-idf', toRow: 'row-quality-idf', cardFrom: 'card-prebooking', cardTo: 'card-quality', route: 'straight' },
             { fromRow: 'row-monitoring-idf', toRow: 'row-quality-idf', cardFrom: 'card-monitoring', cardTo: 'card-quality', route: 'straight' },
             { fromRow: 'row-monitoring-cod', toRow: 'row-tx-cod', cardFrom: 'card-monitoring', cardTo: 'card-transactions', route: 'bottom-around-quality' }
@@ -374,18 +374,19 @@
 
                 let pathData = "";
 
-                if (conn.route === 'left-bypass') {
-                    // Лінія попереднього запису до моніторингу йде зліва (зовнішній обхід)
-                    const lx1 = r1.left - wRect.left;
-                    const lx2 = r2.left - wRect.left;
-                    pathData = `M ${lx1} ${y1} C ${lx1 - 70} ${y1}, ${lx2 - 70} ${y2}, ${lx2} ${y2}`;
+                if (conn.route === 'far-left-bypass') {
+                    // Лінія попереднього запису до моніторингу йде зліва ще глибше, огинаючи Перелік громад зліва зверху
+                    const sx1 = r1.left - wRect.left;
+                    const sy1 = y1;
+                    const ex2 = r2.left - wRect.left;
+                    const ey2 = y2;
+                    // Пункти керування виведені лівіше за Перелік громад (зліва від x=30)
+                    pathData = `M ${sx1} ${sy1} C ${sx1 - 120} ${sy1}, ${ex2 - 120} ${ey2}, ${ex2} ${ey2}`;
                 } else if (conn.route === 'bottom-around-quality') {
-                    // Лінія стат.моніторинг -> динамічний журнал повністю огинає модуль якості знизу
                     const startX = r1.right - wRect.left;
                     const startY = r1.top + r1.height / 2 - wRect.top;
                     const endX = r2.left - wRect.left;
                     const endY = r2.top + r2.height / 2 - wRect.top;
-                    // Пункти керування кривої проходять глибоко вниз під модулем якості
                     pathData = `M ${startX} ${startY} C ${startX + 120} ${startY + 140}, ${endX - 120} ${endY + 140}, ${endX} ${endY}`;
                 } else {
                     const dx = Math.abs(x2 - x1) * 0.5;

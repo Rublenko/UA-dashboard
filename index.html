@@ -206,7 +206,7 @@
     <div class="top-bar">
         <h2>Архітектурна схема зв'язків даних (клікніть на блок для перегляду деталей)</h2>
         <div class="sync-badge">
-            <span>⚡ СХЕМА ОПТИМІЗОВАНА</span>
+            <span>⚡ СХЕМА ВИПРАВЛЕНА</span>
         </div>
     </div>
 
@@ -340,13 +340,13 @@
                 let pathData = "";
 
                 if (conn.route === 'left-side') {
-                    // Вихід з лівого боку першого рядка IDF та вхід у лівий бік другого рядка IDF в обхід ліворуч
+                    // Вихід з лівого боку рядка IDF попереднього запису та вхід у лівий бік рядка IDF статичного моніторингу (обхід зліва)
                     const x1 = r1.left - wRect.left;
                     const y1 = r1.top + r1.height / 2 - wRect.top;
                     const x2 = r2.left - wRect.left;
                     const y2 = r2.top + r2.height / 2 - wRect.top;
                     
-                    const bypassX = x1 - 45; // Відступ ліворуч
+                    const bypassX = x1 - 45; // Відступ ліворуч від карток
                     pathData = `M ${x1} ${y1} C ${bypassX} ${y1}, ${bypassX} ${y2}, ${x2} ${y2}`;
                 } else {
                     // Стандартні з'єднання праворуч-ліворуч
@@ -361,7 +361,7 @@
 
                 const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
                 path.setAttribute('d', pathData);
-                path.setAttribute('id`, `path-${conn.cardFrom}-${conn.cardTo}-${conn.fromRow}`);
+                path.setAttribute('id', `path-${conn.cardFrom}-${conn.cardTo}-${conn.fromRow}`);
                 svg.appendChild(path);
             });
         }

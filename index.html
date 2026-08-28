@@ -204,9 +204,9 @@
 <body>
 
     <div class="top-bar">
-        <h2>Архітектурна схема зв'язків даних (повністю чистий верхній обхід)</h2>
+        <h2>Архітектурна схема зв'язків даних (коридорний маршрут за ескізом)</h2>
         <div class="sync-badge">
-            <span>⚡ ВИПРАВЛЕНО НАВІГАЦІЮ ЛІНІЙ</span>
+            <span>⚡ ТОЧНЕ ПОПАДАННЯ ПО ЗЕЛЕНІЙ ЛІНІЇ</span>
         </div>
     </div>
 
@@ -226,7 +226,7 @@
 
         <!-- Блок 2: Попередній запис -->
         <div class="db-card" id="card-prebooking" onclick="selectCard('prebooking')">
-            <div class="db-header" id="header-prebooking">📅 Підсистема попереднього запису</div>
+            <div class="db-header">📅 Підсистема попереднього запису</div>
             <div class="db-rows">
                 <div class="db-row key" id="row-prebooking-idf"><span class="field-name">🔑 IDF</span></div>
                 <div class="db-row"><span>Зареєстровано</span></div>
@@ -238,7 +238,7 @@
 
         <!-- Блок 3: Статичний моніторинг -->
         <div class="db-card" id="card-monitoring" onclick="selectCard('monitoring')">
-            <div class="db-header" id="header-monitoring">📊 Статичний моніторинг</div>
+            <div class="db-header">📊 Статичний моніторинг</div>
             <div class="db-rows">
                 <div class="db-row key" id="row-monitoring-idf"><span class="field-name">🔑 IDF</span></div>
                 <div class="db-row key" id="row-monitoring-cod"><span class="field-name">🔑 COD громади</span></div>
@@ -347,7 +347,7 @@
 
         const connections = [
             { fromRow: 'row-hromadas-cod', toRow: 'row-monitoring-cod', cardFrom: 'card-hromadas', cardTo: 'card-monitoring', route: 'straight' },
-            { fromRow: 'header-prebooking', toRow: 'header-monitoring', cardFrom: 'card-prebooking', cardTo: 'card-monitoring', route: 'top-arc-bypass' },
+            { fromRow: 'row-prebooking-idf', toRow: 'row-monitoring-idf', cardFrom: 'card-prebooking', cardTo: 'card-monitoring', route: 'corridor-left' },
             { fromRow: 'row-prebooking-idf', toRow: 'row-quality-idf', cardFrom: 'card-prebooking', cardTo: 'card-quality', route: 'straight' },
             { fromRow: 'row-monitoring-idf', toRow: 'row-quality-idf', cardFrom: 'card-monitoring', cardTo: 'card-quality', route: 'straight' },
             { fromRow: 'row-monitoring-cod', toRow: 'row-tx-cod', cardFrom: 'card-monitoring', cardTo: 'card-transactions', route: 'bottom-around-quality' }
@@ -367,26 +367,18 @@
                 const r1 = el1.getBoundingClientRect();
                 const r2 = el2.getBoundingClientRect();
 
-                const x1 = r1.right - wRect.left;
+                const x1 = r1.left - wRect.left; // Лівий край рядка "Попереднього запису"
                 const y1 = r1.top + r1.height / 2 - wRect.top;
-                const x2 = r2.left - wRect.left;
+                const x2 = r2.left - wRect.left; // Лівий край рядка "Статичного моніторингу"
                 const y2 = r2.top + r2.height / 2 - wRect.top;
 
                 let pathData = "";
 
-                if (conn.route === 'top-arc-bypass') {
-                    // Виводимо з верхнього центру картки "Попередній запис" і ведемо дугою зверху до верхнього центру "Статичного моніторингу"
-                    const cardPre = document.getElementById('card-prebooking').getBoundingClientRect();
-                    const cardMon = document.getElementById('card-monitoring').getBoundingClientRect();
-                    
-                    const startX = cardPre.left + cardPre.width * 0.3 - wRect.left;
-                    const startY = cardPre.top - wRect.top;
-                    
-                    const endX = cardMon.left + cardMon.width * 0.3 - wRect.left;
-                    const endY = cardMon.top - wRect.top;
-                    
-                    // Контрольні точки вигинають дугу високо вгору (над усіма елементами ліворуч)
-                    pathData = `M ${startX} ${startY} C ${startX - 30} ${startY - 60}, ${endX - 30} ${endY - 60}, ${endX} ${endY}`;
+                if (conn.route === 'corridor-left') {
+                    // Коридор проходить рівно між правим краєм "Переліку громад" (~340px) і лівими краями карток (~380px)
+                    // Тобто ковзає в проміжку біля X = 350-355
+                    const corridorX = 355;
+                    pathData = `M ${x1} ${y1} C ${corridorX} ${y1}, ${corridorX} ${y2}, ${x2} ${y2}`;
                 } else if (conn.route === 'bottom-around-quality') {
                     const startX = r1.right - wRect.left;
                     const startY = r1.top + r1.height / 2 - wRect.top;
@@ -394,8 +386,10 @@
                     const endY = r2.top + r2.height / 2 - wRect.top;
                     pathData = `M ${startX} ${startY} C ${startX + 120} ${startY + 140}, ${endX - 120} ${endY + 140}, ${endX} ${endY}`;
                 } else {
-                    const dx = Math.abs(x2 - x1) * 0.5;
-                    pathData = `M ${x1} ${y1} C ${x1 + dx} ${y1}, ${x2 - dx} ${y2}, ${x2} ${y2}`;
+                    const straightX1 = r1.right - wRect.left;
+                    const straightX2 = r2.left - wRect.left;
+                    const dx = Math.abs(straightX2 - straightX1) * 0.5;
+                    pathData = `M ${straightX1} ${y1} C ${straightX1 + dx} ${y1}, ${straightX2 - dx} ${y2}, ${straightX2} ${y2}`;
                 }
 
                 const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');

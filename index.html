@@ -89,12 +89,10 @@
             transform: translateY(-2px);
         }
 
-        /* Прецизійне розставлення у 3 колонки для ідеальної геометрії */
+        /* Позиціонування блоків */
         #card-hromadas { left: 40px; top: 180px; }
-        
         #card-prebooking { left: 450px; top: 30px; }
         #card-monitoring { left: 450px; top: 290px; }
-        
         #card-quality { left: 880px; top: 180px; }
 
         .db-header {
@@ -319,10 +317,10 @@
         };
 
         const connections = [
-            { fromRow: 'row-hromadas-cod', toRow: 'row-monitoring-cod', cardFrom: 'card-hromadas', cardTo: 'card-monitoring' },
-            { fromRow: 'row-prebooking-idf', toRow: 'row-monitoring-idf', cardFrom: 'card-prebooking', cardTo: 'card-monitoring' },
-            { fromRow: 'row-prebooking-idf', toRow: 'row-quality-idf', cardFrom: 'card-prebooking', cardTo: 'card-quality' },
-            { fromRow: 'row-monitoring-idf', toRow: 'row-quality-idf', cardFrom: 'card-monitoring', cardTo: 'card-quality' }
+            { fromRow: 'row-hromadas-cod', toRow: 'row-monitoring-cod', cardFrom: 'card-hromadas', cardTo: 'card-monitoring', route: 'default' },
+            { fromRow: 'row-prebooking-idf', toRow: 'row-monitoring-idf', cardFrom: 'card-prebooking', cardTo: 'card-monitoring', route: 'left-side' },
+            { fromRow: 'row-prebooking-idf', toRow: 'row-quality-idf', cardFrom: 'card-prebooking', cardTo: 'card-quality', route: 'default' },
+            { fromRow: 'row-monitoring-idf', toRow: 'row-quality-idf', cardFrom: 'card-monitoring', cardTo: 'card-quality', route: 'default' }
         ];
 
         function drawLines() {
@@ -339,18 +337,31 @@
                 const r1 = el1.getBoundingClientRect();
                 const r2 = el2.getBoundingClientRect();
 
-                const x1 = r1.right - wRect.left;
-                const y1 = r1.top + r1.height / 2 - wRect.top;
-                const x2 = r2.left - wRect.left;
-                const y2 = r2.top + r2.height / 2 - wRect.top;
+                let pathData = "";
 
-                // Розрахунок ідеальної гармонійної кривої Безьє без залітання за краї
-                const dx = Math.abs(x2 - x1) * 0.55;
-                const pathData = `M ${x1} ${y1} C ${x1 + dx} ${y1}, ${x2 - dx} ${y2}, ${x2} ${y2}`;
+                if (conn.route === 'left-side') {
+                    // Вихід з лівого боку першого рядка IDF та вхід у лівий бік другого рядка IDF в обхід ліворуч
+                    const x1 = r1.left - wRect.left;
+                    const y1 = r1.top + r1.height / 2 - wRect.top;
+                    const x2 = r2.left - wRect.left;
+                    const y2 = r2.top + r2.height / 2 - wRect.top;
+                    
+                    const bypassX = x1 - 45; // Відступ ліворуч
+                    pathData = `M ${x1} ${y1} C ${bypassX} ${y1}, ${bypassX} ${y2}, ${x2} ${y2}`;
+                } else {
+                    // Стандартні з'єднання праворуч-ліворуч
+                    const x1 = r1.right - wRect.left;
+                    const y1 = r1.top + r1.height / 2 - wRect.top;
+                    const x2 = r2.left - wRect.left;
+                    const y2 = r2.top + r2.height / 2 - wRect.top;
+
+                    const dx = Math.abs(x2 - x1) * 0.55;
+                    pathData = `M ${x1} ${y1} C ${x1 + dx} ${y1}, ${x2 - dx} ${y2}, ${x2} ${y2}`;
+                }
 
                 const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
                 path.setAttribute('d', pathData);
-                path.setAttribute('id', `path-${conn.cardFrom}-${conn.cardTo}-${conn.fromRow}`);
+                path.setAttribute('id`, `path-${conn.cardFrom}-${conn.cardTo}-${conn.fromRow}`);
                 svg.appendChild(path);
             });
         }

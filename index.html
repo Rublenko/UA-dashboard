@@ -33,6 +33,31 @@
             overflow-x: auto;
         }
 
+        /* Індикатор успішного оновлення коду праворуч */
+        .sync-badge {
+            position: fixed;
+            top: 15px;
+            right: 20px;
+            background-color: #059669;
+            color: #ffffff;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            box-shadow: 0 0 10px rgba(5, 150, 105, 0.5);
+            z-index: 1000;
+            animation: pulseBadge 2s infinite;
+        }
+
+        @keyframes pulseBadge {
+            0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(5, 150, 105, 0.7); }
+            70% { transform: scale(1.05); box-shadow: 0 0 0 8px rgba(5, 150, 105, 0); }
+            100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(5, 150, 105, 0); }
+        }
+
         h2 { 
             font-weight: 400; 
             color: var(--text-muted); 
@@ -41,7 +66,6 @@
             text-align: center;
         }
 
-        /* Головна робоча зона схеми */
         .schema-workspace {
             position: relative;
             width: 1100px;
@@ -49,7 +73,6 @@
             margin: 0 auto;
         }
 
-        /* Стиль карток-блоків із чітким позиціонуванням */
         .db-card {
             position: absolute;
             background-color: var(--card-bg);
@@ -59,7 +82,7 @@
             box-shadow: 0 10px 30px rgba(0,0,0,0.6);
             z-index: 2;
             cursor: pointer;
-            transition: border-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
         }
 
         .db-card:hover, .db-card.active {
@@ -67,7 +90,6 @@
             box-shadow: 0 0 20px rgba(56, 189, 248, 0.3);
         }
 
-        /* Координати блоків на сітці */
         #card-hromadas { left: 40px; top: 220px; }
         #card-prebooking { left: 390px; top: 40px; }
         #card-monitoring { left: 390px; top: 310px; }
@@ -85,9 +107,7 @@
             border-radius: 6px 6px 0 0;
         }
 
-        .db-rows {
-            padding: 4px 0;
-        }
+        .db-rows { padding: 4px 0; }
 
         .db-row {
             padding: 7px 14px;
@@ -99,292 +119,11 @@
         }
 
         .db-row:last-child { border-bottom: none; }
+        .db-row.key { color: var(--key-color); }
+        .db-row span.field-name { display: flex; align-items: center; gap: 6px; }
 
-        .db-row.key {
-            color: var(--key-color);
-        }
-
-        .db-row span.field-name {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        /* SVG шар для ліній зв'язку */
         svg.connections-layer {
             position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
             pointer-events: none;
-            z-index: 1;
-        }
-
-        svg.connections-layer path {
-            fill: none;
-            stroke: var(--border-color);
-            stroke-width: 2;
-            transition: stroke 0.3s ease, stroke-width 0.3s ease;
-        }
-
-        svg.connections-layer path.active {
-            stroke: var(--accent-color);
-            stroke-width: 3;
-            filter: drop-shadow(0 0 5px var(--accent-color));
-        }
-
-        /* Висувна панель */
-        .drawer {
-            max-width: 1100px;
-            margin: 20px auto 0 auto;
-            background-color: var(--card-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 6px;
-            padding: 1.25rem;
-            box-sizing: border-box;
-            display: none;
-            animation: fadeIn 0.3s ease;
-        }
-
-        .drawer.open { display: block; }
-
-        .drawer-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 1rem;
-            border-bottom: 1px solid var(--border-color);
-            padding-bottom: 0.5rem;
-        }
-
-        .drawer-title { font-weight: 600; color: var(--accent-color); font-size: 1rem; }
-
-        .close-btn {
-            background: none;
-            border: none;
-            color: var(--text-muted);
-            font-size: 1.1rem;
-            cursor: pointer;
-        }
-        .close-btn:hover { color: var(--text-main); }
-
-        table.detail-table {
-            width: 100%;
-            border-collapse: collapse;
-            text-align: left;
-            font-size: 0.85rem;
-        }
-
-        table.detail-table th, table.detail-table td {
-            padding: 0.6rem 0.8rem;
-            border-bottom: 1px solid var(--border-color);
-        }
-
-        table.detail-table th { color: var(--text-muted); font-weight: 500; background-color: #282828; }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(8px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-    </style>
-</head>
-<body>
-
-    <h2>Інтерактивна схема зв'язків (клікніть на блок для розгортання таблиці)</h2>
-
-    <div class="schema-workspace" id="workspace">
-        <!-- SVG шар для ліній -->
-        <svg class="connections-layer" id="svg-lines"></svg>
-
-        <!-- Блок 1: Перелік громад -->
-        <div class="db-card" id="card-hromadas" onclick="selectCard('hromadas')">
-            <div class="db-header">⊞ Перелік громад</div>
-            <div class="db-rows">
-                <div class="db-row"><span>область</span></div>
-                <div class="db-row"><span>район</span></div>
-                <div class="db-row"><span>громада</span></div>
-                <div class="db-row key"><span class="field-name">🔑 COD громади</span></div>
-            </div>
-        </div>
-
-        <!-- Блок 2: Підсистема попереднього запису -->
-        <div class="db-card" id="card-prebooking" onclick="selectCard('prebooking')">
-            <div class="db-header">⊞ Підсистема попереднього запису</div>
-            <div class="db-rows">
-                <div class="db-row key"><span class="field-name">🔑 IDF</span></div>
-                <div class="db-row"><span>Зареєстровано</span></div>
-                <div class="db-row"><span>Не відбулося</span></div>
-                <div class="db-row"><span>Завершені</span></div>
-                <div class="db-row"><span>Скасовані</span></div>
-            </div>
-        </div>
-
-        <!-- Блок 3: Статичний моніторинг -->
-        <div class="db-card" id="card-monitoring" onclick="selectCard('monitoring')">
-            <div class="db-header">⊞ Статичний моніторинг</div>
-            <div class="db-rows">
-                <div class="db-row key"><span class="field-name">🔑 IDF</span></div>
-                <div class="db-row key"><span class="field-name">🔑 COD громади</span></div>
-                <div class="db-row"><span>Наявність ІС</span></div>
-                <div class="db-row"><span>Загальна кількість послуг</span></div>
-                <div class="db-row"><span>Загальна кількість послуг згідно 1226</span></div>
-                <div class="db-row"><span>Загальна кількість послуг наданих мобільним ЦНАП</span></div>
-            </div>
-        </div>
-
-        <!-- Блок 4: Модуль оцінки якості -->
-        <div class="db-card" id="card-quality" onclick="selectCard('quality')">
-            <div class="db-header">⊞ Модуль оцінки якості</div>
-            <div class="db-rows">
-                <div class="db-row key"><span class="field-name">🔑 IDF</span></div>
-                <div class="db-row"><span>CSI</span></div>
-                <div class="db-row"><span>NPS</span></div>
-                <div class="db-row"><span>Кількість відгуків</span></div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Висувна панель деталей -->
-    <div id="info-drawer" class="drawer">
-        <div class="drawer-header">
-            <span id="drawer-title" class="drawer-title">Деталі таблиці</span>
-            <button class="close-btn" onclick="closeDrawer()">✕</button>
-        </div>
-        <div id="drawer-content"></div>
-    </div>
-
-    <script>
-        const tableDetails = {
-            hromadas: {
-                title: "Деталі довідника: Перелік громад",
-                headers: ["Поле", "Тип даних", "Опис / Зв'язок"],
-                rows: [
-                    ["область", "VARCHAR(100)", "Адміністративна область розташування"],
-                    ["район", "VARCHAR(100)", "Район в межах області"],
-                    ["громада", "VARCHAR(150)", "Назва територіальної громади"],
-                    ["COD громади", "VARCHAR(50) [PK]", "Унікальний кодифікатор громади"]
-                ]
-            },
-            prebooking: {
-                title: "Деталі модуля: Підсистема попереднього запису",
-                headers: ["Поле", "Тип даних", "Опис / Зв'язок"],
-                rows: [
-                    ["IDF", "INT [PK]", "Ідентифікатор запису"],
-                    ["Зареєстровано", "INT", "Кількість записів"],
-                    ["Не відбулося", "INT", "Пропущені візити"],
-                    ["Завершені", "INT", "Обслуговувані громадяни"],
-                    ["Скасовані", "INT", "Скасовані користувачем"]
-                ]
-            },
-            monitoring: {
-                title: "Деталі таблиці: Статичний моніторинг",
-                headers: ["Поле", "Тип даних", "Опис / Зв'язок"],
-                rows: [
-                    ["IDF", "INT [FK]", "Зв'язок з попереднього запису"],
-                    ["COD громади", "VARCHAR(50) [FK]", "Зв'язок з Перелік громад"],
-                    ["Наявність ІС", "BOOLEAN", "Статус інтернет-мережі"],
-                    ["Загальна кількість послуг", "INT", "Сумарний показник"],
-                    ["Загальна кількість послуг згідно 1226", "INT", "Послуги за регламентом №1226"],
-                    ["Загальна кількість послуг наданих мобільним ЦНАП", "INT", "Виїзний сервіс"]
-                ]
-            },
-            quality: {
-                title: "Деталі модуля: Модуль оцінки якості",
-                headers: ["Поле", "Тип даних", "Опис / Зв'язок"],
-                rows: [
-                    ["IDF", "INT [FK]", "Зв'язок по ключу IDF"],
-                    ["CSI", "DECIMAL(5,2)", "Індекс задоволеності (CSI)"],
-                    ["NPS", "DECIMAL(5,2)", "Індекс лояльності (NPS)"],
-                    ["Кількість відгуків", "INT", "Загальна кількість оцінок"]
-                ]
-            }
-        };
-
-        // Пари для побудови ліній зв'язку
-        const connections = [
-            { from: 'card-hromadas', to: 'card-monitoring', fromSide: 'right', toSide: 'left' },
-            { from: 'card-prebooking', to: 'card-quality', fromSide: 'right', toSide: 'left' },
-            { from: 'card-monitoring', to: 'card-quality', fromSide: 'right', toSide: 'left' }
-        ];
-
-        function drawLines() {
-            const svg = document.getElementById('svg-lines');
-            const workspace = document.getElementById('workspace');
-            const wRect = workspace.getBoundingClientRect();
-            
-            svg.innerHTML = '';
-
-            connections.forEach(conn => {
-                const el1 = document.getElementById(conn.from);
-                const el2 = document.getElementById(conn.to);
-                if (!el1 || !el2) return;
-
-                const r1 = el1.getBoundingClientRect();
-                const r2 = el2.getBoundingClientRect();
-
-                // Обчислюємо точки відносно робочої області
-                const x1 = r1.right - wRect.left;
-                const y1 = r1.top + r1.height / 2 - wRect.top;
-                const x2 = r2.left - wRect.left;
-                const y2 = r2.top + r2.height / 2 - wRect.top;
-
-                // Будуємо плавні криві Безьє
-                const dx = Math.abs(x2 - x1) * 0.5;
-                const pathData = `M ${x1} ${y1} C ${x1 + dx} ${y1}, ${x2 - dx} ${y2}, ${x2} ${y2}`;
-
-                const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-                path.setAttribute('d', pathData);
-                path.setAttribute('id', `path-${conn.from}-${conn.to}`);
-                svg.appendChild(path);
-            });
-        }
-
-        function selectCard(cardId) {
-            // Очищаємо попередні виділення
-            document.querySelectorAll('.db-card').forEach(c => c.classList.remove('active'));
-            document.querySelectorAll('svg.connections-layer path').forEach(p => p.classList.remove('active'));
-
-            // Активуємо обрану картку
-            const card = document.getElementById(`card-${cardId}`);
-            if (card) card.classList.add('active');
-
-            // Підсвічуємо пов'язані лінії
-            connections.forEach(conn => {
-                if (conn.from === `card-${cardId}` || conn.to === `card-${cardId}`) {
-                    const path = document.getElementById(`path-${conn.from}-${conn.to}`);
-                    if (path) path.classList.add('active');
-                }
-            });
-
-            // Заповнюємо висувну панель
-            const data = tableDetails[cardId];
-            if (!data) return;
-
-            document.getElementById('drawer-title').innerText = data.title;
-            let html = `<table class="detail-table"><thead><tr>`;
-            data.headers.forEach(h => html += `<th>${h}</th>`);
-            html += `</tr></thead><tbody>`;
-            data.rows.forEach(row => {
-                html += `<tr>`;
-                row.forEach(cell => html += `<td>${cell}</td>`);
-                html += `</tr>`;
-            });
-            html += `</tbody></table>`;
-
-            document.getElementById('drawer-content').innerHTML = html;
-            document.getElementById('info-drawer').classList.add('open');
-        }
-
-        function closeDrawer() {
-            document.getElementById('info-drawer').classList.remove('open');
-            document.querySelectorAll('.db-card').forEach(c => c.classList.remove('active'));
-            document.querySelectorAll('svg.connections-layer path').forEach(p => p.classList.remove('active'));
-        }
-
-        // Малюємо лінії при завантаженні та зміні розміру
-        window.addEventListener('load', drawLines);
-        window.addEventListener('resize', drawLines);
-    </script>
-</body>
-</html>

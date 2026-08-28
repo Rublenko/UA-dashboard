@@ -37,7 +37,7 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            max-width: 1150px;
+            max-width: 1200px;
             margin: 0 auto 1.5rem auto;
             width: 100%;
         }
@@ -71,8 +71,8 @@
 
         .schema-workspace {
             position: relative;
-            width: 1150px;
-            height: 650px;
+            width: 1200px;
+            height: 700px;
             margin: 0 auto;
         }
 
@@ -81,9 +81,9 @@
             background-color: var(--card-bg);
             border: 2px solid var(--border-color);
             border-radius: 8px;
-            width: 310px;
+            width: 290px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.6);
-            z-index: 2;
+            z-index: 3; /* Вище за лінії */
             cursor: pointer;
             transition: border-color 0.3s ease, box-shadow 0.3s ease;
         }
@@ -93,11 +93,11 @@
             box-shadow: 0 0 20px rgba(56, 189, 248, 0.3);
         }
 
-        /* Розподіл блоків на робочій області */
-        #card-hromadas { left: 20px; top: 220px; }
-        #card-prebooking { left: 370px; top: 20px; }
-        #card-monitoring { left: 370px; top: 320px; }
-        #card-quality { left: 780px; top: 220px; }
+        /* Розставлення блоків на сітці для красивого обходу */
+        #card-hromadas { left: 30px; top: 250px; }
+        #card-prebooking { left: 450px; top: 30px; }
+        #card-monitoring { left: 450px; top: 380px; }
+        #card-quality { left: 880px; top: 250px; }
 
         .db-header {
             background-color: #282828;
@@ -126,29 +126,31 @@
         .db-row.key { color: var(--key-color); }
         .db-row span.field-name { display: flex; align-items: center; gap: 6px; }
 
+        /* SVG шар для ліній позаду блоків */
         svg.connections-layer {
             position: absolute;
             top: 0; left: 0;
             width: 100%; height: 100%;
             pointer-events: none;
-            z-index: 1;
+            z-index: 1; 
         }
 
         svg.connections-layer path {
             fill: none;
             stroke: var(--border-color);
-            stroke-width: 2;
+            stroke-width: 2.5;
             transition: stroke 0.3s ease, stroke-width 0.3s ease;
         }
 
         svg.connections-layer path.active {
             stroke: var(--accent-color);
-            stroke-width: 3;
-            filter: drop-shadow(0 0 5px var(--accent-color));
+            stroke-width: 4;
+            filter: drop-shadow(0 0 8px var(--accent-color));
+            z-index: 2;
         }
 
         .drawer {
-            max-width: 1150px;
+            max-width: 1200px;
             margin: 20px auto 0 auto;
             background-color: var(--card-bg);
             border: 1px solid var(--border-color);
@@ -314,12 +316,11 @@
             }
         };
 
-        // Зв'язки тепер прив'язані до конкретних елементів рядків (ключів)
         const connections = [
-            { fromRow: 'row-hromadas-cod', toRow: 'row-monitoring-cod', cardFrom: 'card-hromadas', cardTo: 'card-monitoring' },
-            { fromRow: 'row-prebooking-idf', toRow: 'row-monitoring-idf', cardFrom: 'card-prebooking', cardTo: 'card-monitoring' },
-            { fromRow: 'row-prebooking-idf', toRow: 'row-quality-idf', cardFrom: 'card-prebooking', cardTo: 'card-quality' },
-            { fromRow: 'row-monitoring-idf', toRow: 'row-quality-idf', cardFrom: 'card-monitoring', cardTo: 'card-quality' }
+            { fromRow: 'row-hromadas-cod', toRow: 'row-monitoring-cod', cardFrom: 'card-hromadas', cardTo: 'card-monitoring', type: 'hromadas-monitoring' },
+            { fromRow: 'row-prebooking-idf', toRow: 'row-monitoring-idf', cardFrom: 'card-prebooking', cardTo: 'card-monitoring', type: 'vertical-side' },
+            { fromRow: 'row-prebooking-idf', toRow: 'row-quality-idf', cardFrom: 'card-prebooking', cardTo: 'card-quality', type: 'curve-top' },
+            { fromRow: 'row-monitoring-idf', toRow: 'row-quality-idf', cardFrom: 'card-monitoring', cardTo: 'card-quality', type: 'curve-bottom' }
         ];
 
         function drawLines() {
@@ -336,14 +337,28 @@
                 const r1 = el1.getBoundingClientRect();
                 const r2 = el2.getBoundingClientRect();
 
-                // Центр кожного конкретного рядка ключа
                 const x1 = r1.right - wRect.left;
                 const y1 = r1.top + r1.height / 2 - wRect.top;
                 const x2 = r2.left - wRect.left;
                 const y2 = r2.top + r2.height / 2 - wRect.top;
 
-                const dx = Math.abs(x2 - x1) * 0.5;
-                const pathData = `M ${x1} ${y1} C ${x1 + dx} ${y1}, ${x2 - dx} ${y2}, ${x2} ${y2}`;
+                let pathData = "";
+
+                if (conn.type === 'vertical-side') {
+                    // Лінія між двома вертикальними сусідами (зліва йде плавно в обхід)
+                    const midY = (y1 + y2) / 2;
+                    pathData = `M ${x1} ${y1} C ${x1 - 50} ${y1}, ${x2 - 50} ${y2}, ${x2} ${y2}`;
+                } else if (conn.type === 'curve-top') {
+                    // Верхня дуга з обходом блоків зверху
+                    pathData = `M ${x1} ${y1} C ${x1 + 80} ${y1 - 100}, ${x2 - 80} ${y2 - 100}, ${x2} ${y2}`;
+                } else if (conn.type === 'curve-bottom') {
+                    // Нижня дуга з обходом блоків знизу
+                    pathData = `M ${x1} ${y1} C ${x1 + 80} ${y1 + 100}, ${x2 - 80} ${y2 + 100}, ${x2} ${y2}`;
+                } else {
+                    // Стандартна плавна крива
+                    const dx = Math.abs(x2 - x1) * 0.5;
+                    pathData = `M ${x1} ${y1} C ${x1 + dx} ${y1}, ${x2 - dx} ${y2}, ${x2} ${y2}`;
+                }
 
                 const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
                 path.setAttribute('d', pathData);

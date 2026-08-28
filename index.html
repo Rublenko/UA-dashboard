@@ -204,9 +204,9 @@
 <body>
 
     <div class="top-bar">
-        <h2>Архітектурна схема зв'язків даних (коректний зовнішній обхід зліва зверху)</h2>
+        <h2>Архітектурна схема зв'язків даних (повністю чистий верхній обхід)</h2>
         <div class="sync-badge">
-            <span>⚡ ПОВНІСТЮ ВИПРАВЛЕНО</span>
+            <span>⚡ ВИПРАВЛЕНО НАВІГАЦІЮ ЛІНІЙ</span>
         </div>
     </div>
 
@@ -226,7 +226,7 @@
 
         <!-- Блок 2: Попередній запис -->
         <div class="db-card" id="card-prebooking" onclick="selectCard('prebooking')">
-            <div class="db-header">📅 Підсистема попереднього запису</div>
+            <div class="db-header" id="header-prebooking">📅 Підсистема попереднього запису</div>
             <div class="db-rows">
                 <div class="db-row key" id="row-prebooking-idf"><span class="field-name">🔑 IDF</span></div>
                 <div class="db-row"><span>Зареєстровано</span></div>
@@ -238,7 +238,7 @@
 
         <!-- Блок 3: Статичний моніторинг -->
         <div class="db-card" id="card-monitoring" onclick="selectCard('monitoring')">
-            <div class="db-header">📊 Статичний моніторинг</div>
+            <div class="db-header" id="header-monitoring">📊 Статичний моніторинг</div>
             <div class="db-rows">
                 <div class="db-row key" id="row-monitoring-idf"><span class="field-name">🔑 IDF</span></div>
                 <div class="db-row key" id="row-monitoring-cod"><span class="field-name">🔑 COD громади</span></div>
@@ -347,7 +347,7 @@
 
         const connections = [
             { fromRow: 'row-hromadas-cod', toRow: 'row-monitoring-cod', cardFrom: 'card-hromadas', cardTo: 'card-monitoring', route: 'straight' },
-            { fromRow: 'row-prebooking-idf', toRow: 'row-monitoring-idf', cardFrom: 'card-prebooking', cardTo: 'card-monitoring', route: 'top-left-safe-bypass' },
+            { fromRow: 'header-prebooking', toRow: 'header-monitoring', cardFrom: 'card-prebooking', cardTo: 'card-monitoring', route: 'top-arc-bypass' },
             { fromRow: 'row-prebooking-idf', toRow: 'row-quality-idf', cardFrom: 'card-prebooking', cardTo: 'card-quality', route: 'straight' },
             { fromRow: 'row-monitoring-idf', toRow: 'row-quality-idf', cardFrom: 'card-monitoring', cardTo: 'card-quality', route: 'straight' },
             { fromRow: 'row-monitoring-cod', toRow: 'row-tx-cod', cardFrom: 'card-monitoring', cardTo: 'card-transactions', route: 'bottom-around-quality' }
@@ -374,17 +374,19 @@
 
                 let pathData = "";
 
-                if (conn.route === 'top-left-safe-bypass') {
-                    // Виводимо з лівого краю "Попереднього запису" та робимо дугу зверху зліва від "Переліку громад"
+                if (conn.route === 'top-arc-bypass') {
+                    // Виводимо з верхнього центру картки "Попередній запис" і ведемо дугою зверху до верхнього центру "Статичного моніторингу"
                     const cardPre = document.getElementById('card-prebooking').getBoundingClientRect();
-                    const startX = cardPre.left - wRect.left;
-                    const startY = r1.top + r1.height / 2 - wRect.top;
+                    const cardMon = document.getElementById('card-monitoring').getBoundingClientRect();
                     
-                    const endX = r2.left - wRect.left;
-                    const endY = y2;
+                    const startX = cardPre.left + cardPre.width * 0.3 - wRect.left;
+                    const startY = cardPre.top - wRect.top;
                     
-                    // Координати контрольних точок винесені далеко вліво (x = 35), повністю обходячи картку "Перелік громад" зверху
-                    pathData = `M ${startX} ${startY} C 35 ${startY}, 35 ${endY}, ${endX} ${endY}`;
+                    const endX = cardMon.left + cardMon.width * 0.3 - wRect.left;
+                    const endY = cardMon.top - wRect.top;
+                    
+                    // Контрольні точки вигинають дугу високо вгору (над усіма елементами ліворуч)
+                    pathData = `M ${startX} ${startY} C ${startX - 30} ${startY - 60}, ${endX - 30} ${endY - 60}, ${endX} ${endY}`;
                 } else if (conn.route === 'bottom-around-quality') {
                     const startX = r1.right - wRect.left;
                     const startY = r1.top + r1.height / 2 - wRect.top;

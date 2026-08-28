@@ -6,15 +6,16 @@
     <title>Архітектурна схема даних</title>
     <style>
         :root {
-            --bg-color: #121212;
-            --grid-color: #1e1e1e;
-            --card-bg: #1e1e1e;
-            --border-color: #444444;
+            --bg-color: #0f172a;
+            --grid-color: #1e293b;
+            --card-bg: #1e293b;
+            --border-color: #334155;
             --border-hover: #38bdf8;
             --accent-color: #38bdf8;
-            --text-main: #e0e0e0;
-            --text-muted: #888888;
-            --key-color: #f59e0b;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --key-color: #fbbf24;
+            --line-default: #475569;
         }
 
         body {
@@ -22,12 +23,12 @@
             background-color: var(--bg-color);
             color: var(--text-main);
             margin: 0;
-            padding: 1.5rem;
+            padding: 2rem;
             min-height: 100vh;
             background-image:
                 linear-gradient(to right, var(--grid-color) 1px, transparent 1px),
                 linear-gradient(to bottom, var(--grid-color) 1px, transparent 1px);
-            background-size: 30px 30px;
+            background-size: 32px 32px;
             display: flex;
             flex-direction: column;
             overflow-x: auto;
@@ -37,16 +38,17 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            max-width: 1200px;
-            margin: 0 auto 1.5rem auto;
+            max-width: 1250px;
+            margin: 0 auto 2rem auto;
             width: 100%;
         }
 
         h2 { 
             font-weight: 400; 
             color: var(--text-muted); 
-            font-size: 1rem; 
+            font-size: 0.95rem; 
             margin: 0;
+            letter-spacing: 0.02em;
         }
 
         .sync-badge {
@@ -54,111 +56,110 @@
             color: #ffffff;
             padding: 6px 14px;
             border-radius: 20px;
-            font-size: 0.85rem;
+            font-size: 0.8rem;
             font-weight: 600;
             display: inline-flex;
             align-items: center;
-            gap: 8px;
-            box-shadow: 0 0 15px rgba(5, 150, 105, 0.6);
-            animation: pulseBadge 1.5s infinite;
-        }
-
-        @keyframes pulseBadge {
-            0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(5, 150, 105, 0.7); }
-            70% { transform: scale(1.03); box-shadow: 0 0 0 8px rgba(5, 150, 105, 0); }
-            100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(5, 150, 105, 0); }
+            gap: 6px;
+            box-shadow: 0 0 15px rgba(5, 150, 105, 0.4);
         }
 
         .schema-workspace {
             position: relative;
-            width: 1200px;
-            height: 700px;
+            width: 1250px;
+            height: 600px;
             margin: 0 auto;
         }
 
         .db-card {
             position: absolute;
             background-color: var(--card-bg);
-            border: 2px solid var(--border-color);
-            border-radius: 8px;
-            width: 290px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.6);
-            z-index: 3; /* Вище за лінії */
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            width: 300px;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5), 0 8px 10px -6px rgba(0, 0, 0, 0.5);
+            z-index: 3;
             cursor: pointer;
-            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+            transition: all 0.25s ease;
         }
 
         .db-card:hover, .db-card.active {
             border-color: var(--border-hover);
-            box-shadow: 0 0 20px rgba(56, 189, 248, 0.3);
+            box-shadow: 0 0 25px rgba(56, 189, 248, 0.25);
+            transform: translateY(-2px);
         }
 
-        /* Розставлення блоків на сітці для красивого обходу */
-        #card-hromadas { left: 30px; top: 250px; }
+        /* Прецизійне розставлення у 3 колонки для ідеальної геометрії */
+        #card-hromadas { left: 40px; top: 180px; }
+        
         #card-prebooking { left: 450px; top: 30px; }
-        #card-monitoring { left: 450px; top: 380px; }
-        #card-quality { left: 880px; top: 250px; }
+        #card-monitoring { left: 450px; top: 290px; }
+        
+        #card-quality { left: 880px; top: 180px; }
 
         .db-header {
-            background-color: #282828;
-            padding: 10px 14px;
+            background-color: #1e293b;
+            padding: 12px 16px;
             font-size: 0.9rem;
             font-weight: 600;
-            border-bottom: 2px solid var(--border-color);
+            border-bottom: 1px solid var(--border-color);
             display: flex;
             align-items: center;
             gap: 8px;
-            border-radius: 6px 6px 0 0;
+            border-radius: 9px 9px 0 0;
+            color: #f1f5f9;
         }
 
-        .db-rows { padding: 4px 0; }
+        .db-rows { padding: 6px 0; }
 
         .db-row {
-            padding: 7px 14px;
+            padding: 8px 16px;
             font-size: 0.85rem;
             display: flex;
             justify-content: space-between;
+            align-items: center;
             color: var(--text-main);
-            border-bottom: 1px solid rgba(255,255,255,0.04);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.03);
         }
 
         .db-row:last-child { border-bottom: none; }
-        .db-row.key { color: var(--key-color); }
-        .db-row span.field-name { display: flex; align-items: center; gap: 6px; }
+        .db-row.key { color: var(--key-color); font-weight: 500; }
+        .db-row span.field-name { display: flex; align-items: center; gap: 8px; }
 
-        /* SVG шар для ліній позаду блоків */
         svg.connections-layer {
             position: absolute;
             top: 0; left: 0;
             width: 100%; height: 100%;
             pointer-events: none;
-            z-index: 1; 
+            z-index: 1;
         }
 
         svg.connections-layer path {
             fill: none;
-            stroke: var(--border-color);
-            stroke-width: 2.5;
-            transition: stroke 0.3s ease, stroke-width 0.3s ease;
+            stroke: var(--line-default);
+            stroke-width: 2;
+            stroke-linecap: round;
+            transition: stroke 0.25s ease, stroke-width 0.25s ease;
         }
 
         svg.connections-layer path.active {
             stroke: var(--accent-color);
-            stroke-width: 4;
-            filter: drop-shadow(0 0 8px var(--accent-color));
+            stroke-width: 3.5;
+            filter: drop-shadow(0 0 6px rgba(56, 189, 248, 0.5));
             z-index: 2;
         }
 
         .drawer {
-            max-width: 1200px;
-            margin: 20px auto 0 auto;
+            max-width: 1250px;
+            margin: 24px auto 0 auto;
             background-color: var(--card-bg);
             border: 1px solid var(--border-color);
-            border-radius: 6px;
-            padding: 1.25rem;
+            border-radius: 10px;
+            padding: 1.5rem;
             box-sizing: border-box;
             display: none;
-            animation: fadeIn 0.3s ease;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            animation: fadeIn 0.25s ease;
         }
 
         .drawer.open { display: block; }
@@ -169,7 +170,7 @@
             align-items: center;
             margin-bottom: 1rem;
             border-bottom: 1px solid var(--border-color);
-            padding-bottom: 0.5rem;
+            padding-bottom: 0.75rem;
         }
 
         .drawer-title { font-weight: 600; color: var(--accent-color); font-size: 1rem; }
@@ -177,7 +178,8 @@
         .close-btn {
             background: none; border: none;
             color: var(--text-muted);
-            font-size: 1.1rem; cursor: pointer;
+            font-size: 1.2rem; cursor: pointer;
+            padding: 0; line-height: 1;
         }
         .close-btn:hover { color: var(--text-main); }
 
@@ -189,14 +191,14 @@
         }
 
         table.detail-table th, table.detail-table td {
-            padding: 0.6rem 0.8rem;
+            padding: 0.65rem 0.9rem;
             border-bottom: 1px solid var(--border-color);
         }
 
-        table.detail-table th { color: var(--text-muted); font-weight: 500; background-color: #282828; }
+        table.detail-table th { color: var(--text-muted); font-weight: 500; background-color: rgba(15, 23, 42, 0.4); }
 
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(8px); }
+            from { opacity: 0; transform: translateY(6px); }
             to { opacity: 1; transform: translateY(0); }
         }
     </style>
@@ -204,18 +206,18 @@
 <body>
 
     <div class="top-bar">
-        <h2>Інтерактивна схема зв'язків (клікніть на блок для розгортання таблиці)</h2>
+        <h2>Архітектурна схема зв'язків даних (клікніть на блок для перегляду деталей)</h2>
         <div class="sync-badge">
-            <span>⚠️ (!) КОД ОНОВЛЕНО</span>
+            <span>⚡ СХЕМА ОПТИМІЗОВАНА</span>
         </div>
     </div>
 
     <div class="schema-workspace" id="workspace">
         <svg class="connections-layer" id="svg-lines"></svg>
 
-        <!-- Блок 1 -->
+        <!-- Блок 1: Перелік громад -->
         <div class="db-card" id="card-hromadas" onclick="selectCard('hromadas')">
-            <div class="db-header">⊞ Перелік громад</div>
+            <div class="db-header">📂 Перелік громад</div>
             <div class="db-rows">
                 <div class="db-row"><span>область</span></div>
                 <div class="db-row"><span>район</span></div>
@@ -224,9 +226,9 @@
             </div>
         </div>
 
-        <!-- Блок 2 -->
+        <!-- Блок 2: Попередній запис -->
         <div class="db-card" id="card-prebooking" onclick="selectCard('prebooking')">
-            <div class="db-header">⊞ Підсистема попереднього запису</div>
+            <div class="db-header">📅 Підсистема попереднього запису</div>
             <div class="db-rows">
                 <div class="db-row key" id="row-prebooking-idf"><span class="field-name">🔑 IDF</span></div>
                 <div class="db-row"><span>Зареєстровано</span></div>
@@ -236,9 +238,9 @@
             </div>
         </div>
 
-        <!-- Блок 3 -->
+        <!-- Блок 3: Статичний моніторинг -->
         <div class="db-card" id="card-monitoring" onclick="selectCard('monitoring')">
-            <div class="db-header">⊞ Статичний моніторинг</div>
+            <div class="db-header">📊 Статичний моніторинг</div>
             <div class="db-rows">
                 <div class="db-row key" id="row-monitoring-idf"><span class="field-name">🔑 IDF</span></div>
                 <div class="db-row key" id="row-monitoring-cod"><span class="field-name">🔑 COD громади</span></div>
@@ -249,9 +251,9 @@
             </div>
         </div>
 
-        <!-- Блок 4 -->
+        <!-- Блок 4: Модуль якості -->
         <div class="db-card" id="card-quality" onclick="selectCard('quality')">
-            <div class="db-header">⊞ Модуль оцінки якості</div>
+            <div class="db-header">⭐ Модуль оцінки якості</div>
             <div class="db-rows">
                 <div class="db-row key" id="row-quality-idf"><span class="field-name">🔑 IDF</span></div>
                 <div class="db-row"><span>CSI</span></div>
@@ -317,10 +319,10 @@
         };
 
         const connections = [
-            { fromRow: 'row-hromadas-cod', toRow: 'row-monitoring-cod', cardFrom: 'card-hromadas', cardTo: 'card-monitoring', type: 'hromadas-monitoring' },
-            { fromRow: 'row-prebooking-idf', toRow: 'row-monitoring-idf', cardFrom: 'card-prebooking', cardTo: 'card-monitoring', type: 'vertical-side' },
-            { fromRow: 'row-prebooking-idf', toRow: 'row-quality-idf', cardFrom: 'card-prebooking', cardTo: 'card-quality', type: 'curve-top' },
-            { fromRow: 'row-monitoring-idf', toRow: 'row-quality-idf', cardFrom: 'card-monitoring', cardTo: 'card-quality', type: 'curve-bottom' }
+            { fromRow: 'row-hromadas-cod', toRow: 'row-monitoring-cod', cardFrom: 'card-hromadas', cardTo: 'card-monitoring' },
+            { fromRow: 'row-prebooking-idf', toRow: 'row-monitoring-idf', cardFrom: 'card-prebooking', cardTo: 'card-monitoring' },
+            { fromRow: 'row-prebooking-idf', toRow: 'row-quality-idf', cardFrom: 'card-prebooking', cardTo: 'card-quality' },
+            { fromRow: 'row-monitoring-idf', toRow: 'row-quality-idf', cardFrom: 'card-monitoring', cardTo: 'card-quality' }
         ];
 
         function drawLines() {
@@ -342,23 +344,9 @@
                 const x2 = r2.left - wRect.left;
                 const y2 = r2.top + r2.height / 2 - wRect.top;
 
-                let pathData = "";
-
-                if (conn.type === 'vertical-side') {
-                    // Лінія між двома вертикальними сусідами (зліва йде плавно в обхід)
-                    const midY = (y1 + y2) / 2;
-                    pathData = `M ${x1} ${y1} C ${x1 - 50} ${y1}, ${x2 - 50} ${y2}, ${x2} ${y2}`;
-                } else if (conn.type === 'curve-top') {
-                    // Верхня дуга з обходом блоків зверху
-                    pathData = `M ${x1} ${y1} C ${x1 + 80} ${y1 - 100}, ${x2 - 80} ${y2 - 100}, ${x2} ${y2}`;
-                } else if (conn.type === 'curve-bottom') {
-                    // Нижня дуга з обходом блоків знизу
-                    pathData = `M ${x1} ${y1} C ${x1 + 80} ${y1 + 100}, ${x2 - 80} ${y2 + 100}, ${x2} ${y2}`;
-                } else {
-                    // Стандартна плавна крива
-                    const dx = Math.abs(x2 - x1) * 0.5;
-                    pathData = `M ${x1} ${y1} C ${x1 + dx} ${y1}, ${x2 - dx} ${y2}, ${x2} ${y2}`;
-                }
+                // Розрахунок ідеальної гармонійної кривої Безьє без залітання за краї
+                const dx = Math.abs(x2 - x1) * 0.55;
+                const pathData = `M ${x1} ${y1} C ${x1 + dx} ${y1}, ${x2 - dx} ${y2}, ${x2} ${y2}`;
 
                 const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
                 path.setAttribute('d', pathData);

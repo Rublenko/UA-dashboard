@@ -37,7 +37,7 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            max-width: 1100px;
+            max-width: 1150px;
             margin: 0 auto 1.5rem auto;
             width: 100%;
         }
@@ -49,7 +49,6 @@
             margin: 0;
         }
 
-        /* Помітний бейдж із знаком оклику */
         .sync-badge {
             background-color: #059669;
             color: #ffffff;
@@ -72,8 +71,8 @@
 
         .schema-workspace {
             position: relative;
-            width: 1100px;
-            height: 600px;
+            width: 1150px;
+            height: 650px;
             margin: 0 auto;
         }
 
@@ -82,7 +81,7 @@
             background-color: var(--card-bg);
             border: 2px solid var(--border-color);
             border-radius: 8px;
-            width: 300px;
+            width: 310px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.6);
             z-index: 2;
             cursor: pointer;
@@ -94,10 +93,11 @@
             box-shadow: 0 0 20px rgba(56, 189, 248, 0.3);
         }
 
-        #card-hromadas { left: 40px; top: 220px; }
-        #card-prebooking { left: 390px; top: 40px; }
-        #card-monitoring { left: 390px; top: 310px; }
-        #card-quality { left: 760px; top: 220px; }
+        /* Розподіл блоків на робочій області */
+        #card-hromadas { left: 20px; top: 220px; }
+        #card-prebooking { left: 370px; top: 20px; }
+        #card-monitoring { left: 370px; top: 320px; }
+        #card-quality { left: 780px; top: 220px; }
 
         .db-header {
             background-color: #282828;
@@ -148,7 +148,7 @@
         }
 
         .drawer {
-            max-width: 1100px;
+            max-width: 1150px;
             margin: 20px auto 0 auto;
             background-color: var(--card-bg);
             border: 1px solid var(--border-color);
@@ -203,7 +203,6 @@
 
     <div class="top-bar">
         <h2>Інтерактивна схема зв'язків (клікніть на блок для розгортання таблиці)</h2>
-        <!-- Індикатор оновлення прямо зверху -->
         <div class="sync-badge">
             <span>⚠️ (!) КОД ОНОВЛЕНО</span>
         </div>
@@ -212,20 +211,22 @@
     <div class="schema-workspace" id="workspace">
         <svg class="connections-layer" id="svg-lines"></svg>
 
+        <!-- Блок 1 -->
         <div class="db-card" id="card-hromadas" onclick="selectCard('hromadas')">
             <div class="db-header">⊞ Перелік громад</div>
             <div class="db-rows">
                 <div class="db-row"><span>область</span></div>
                 <div class="db-row"><span>район</span></div>
                 <div class="db-row"><span>громада</span></div>
-                <div class="db-row key"><span class="field-name">🔑 COD громади</span></div>
+                <div class="db-row key" id="row-hromadas-cod"><span class="field-name">🔑 COD громади</span></div>
             </div>
         </div>
 
+        <!-- Блок 2 -->
         <div class="db-card" id="card-prebooking" onclick="selectCard('prebooking')">
             <div class="db-header">⊞ Підсистема попереднього запису</div>
             <div class="db-rows">
-                <div class="db-row key"><span class="field-name">🔑 IDF</span></div>
+                <div class="db-row key" id="row-prebooking-idf"><span class="field-name">🔑 IDF</span></div>
                 <div class="db-row"><span>Зареєстровано</span></div>
                 <div class="db-row"><span>Не відбулося</span></div>
                 <div class="db-row"><span>Завершені</span></div>
@@ -233,11 +234,12 @@
             </div>
         </div>
 
+        <!-- Блок 3 -->
         <div class="db-card" id="card-monitoring" onclick="selectCard('monitoring')">
             <div class="db-header">⊞ Статичний моніторинг</div>
             <div class="db-rows">
-                <div class="db-row key"><span class="field-name">🔑 IDF</span></div>
-                <div class="db-row key"><span class="field-name">🔑 COD громади</span></div>
+                <div class="db-row key" id="row-monitoring-idf"><span class="field-name">🔑 IDF</span></div>
+                <div class="db-row key" id="row-monitoring-cod"><span class="field-name">🔑 COD громади</span></div>
                 <div class="db-row"><span>Наявність ІС</span></div>
                 <div class="db-row"><span>Загальна кількість послуг</span></div>
                 <div class="db-row"><span>Загальна кількість послуг згідно 1226</span></div>
@@ -245,10 +247,11 @@
             </div>
         </div>
 
+        <!-- Блок 4 -->
         <div class="db-card" id="card-quality" onclick="selectCard('quality')">
             <div class="db-header">⊞ Модуль оцінки якості</div>
             <div class="db-rows">
-                <div class="db-row key"><span class="field-name">🔑 IDF</span></div>
+                <div class="db-row key" id="row-quality-idf"><span class="field-name">🔑 IDF</span></div>
                 <div class="db-row"><span>CSI</span></div>
                 <div class="db-row"><span>NPS</span></div>
                 <div class="db-row"><span>Кількість відгуків</span></div>
@@ -311,10 +314,12 @@
             }
         };
 
+        // Зв'язки тепер прив'язані до конкретних елементів рядків (ключів)
         const connections = [
-            { from: 'card-hromadas', to: 'card-monitoring' },
-            { from: 'card-prebooking', to: 'card-quality' },
-            { from: 'card-monitoring', to: 'card-quality' }
+            { fromRow: 'row-hromadas-cod', toRow: 'row-monitoring-cod', cardFrom: 'card-hromadas', cardTo: 'card-monitoring' },
+            { fromRow: 'row-prebooking-idf', toRow: 'row-monitoring-idf', cardFrom: 'card-prebooking', cardTo: 'card-monitoring' },
+            { fromRow: 'row-prebooking-idf', toRow: 'row-quality-idf', cardFrom: 'card-prebooking', cardTo: 'card-quality' },
+            { fromRow: 'row-monitoring-idf', toRow: 'row-quality-idf', cardFrom: 'card-monitoring', cardTo: 'card-quality' }
         ];
 
         function drawLines() {
@@ -324,13 +329,14 @@
             svg.innerHTML = '';
 
             connections.forEach(conn => {
-                const el1 = document.getElementById(conn.from);
-                const el2 = document.getElementById(conn.to);
+                const el1 = document.getElementById(conn.fromRow);
+                const el2 = document.getElementById(conn.toRow);
                 if (!el1 || !el2) return;
 
                 const r1 = el1.getBoundingClientRect();
                 const r2 = el2.getBoundingClientRect();
 
+                // Центр кожного конкретного рядка ключа
                 const x1 = r1.right - wRect.left;
                 const y1 = r1.top + r1.height / 2 - wRect.top;
                 const x2 = r2.left - wRect.left;
@@ -341,7 +347,7 @@
 
                 const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
                 path.setAttribute('d', pathData);
-                path.setAttribute('id', `path-${conn.from}-${conn.to}`);
+                path.setAttribute('id', `path-${conn.cardFrom}-${conn.cardTo}-${conn.fromRow}`);
                 svg.appendChild(path);
             });
         }
@@ -354,8 +360,8 @@
             if (card) card.classList.add('active');
 
             connections.forEach(conn => {
-                if (conn.from === `card-${cardId}` || conn.to === `card-${cardId}`) {
-                    const path = document.getElementById(`path-${conn.from}-${conn.to}`);
+                if (conn.cardFrom === `card-${cardId}` || conn.cardTo === `card-${cardId}`) {
+                    const path = document.getElementById(`path-${conn.cardFrom}-${conn.cardTo}-${conn.fromRow}`);
                     if (path) path.classList.add('active');
                 }
             });

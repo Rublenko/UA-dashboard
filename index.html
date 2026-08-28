@@ -67,7 +67,7 @@
         .schema-workspace {
             position: relative;
             width: 1550px;
-            height: 680px;
+            height: 700px;
             margin: 0 auto;
         }
 
@@ -89,7 +89,6 @@
             transform: translateY(-2px);
         }
 
-        /* Точне фіксоване розташування карток */
         #card-hromadas { left: 30px; top: 180px; }
         #card-prebooking { left: 380px; top: 30px; }
         #card-monitoring { left: 380px; top: 350px; }
@@ -205,9 +204,9 @@
 <body>
 
     <div class="top-bar">
-        <h2>Архітектурна схема зв'язків даних (виправлені логічні зв'язки)</h2>
+        <h2>Архітектурна схема зв'язків даних (ідеальний обхід ліворуч та знизу)</h2>
         <div class="sync-badge">
-            <span>⚡ СХЕМА ВИПРАВЛЕНА</span>
+            <span>⚡ ІДЕАЛЬНЕ ВИПРАВЛЕННЯ</span>
         </div>
     </div>
 
@@ -335,7 +334,7 @@
                 headers: ["Поле в Tableau", "Тип даних", "Опис сирого потоку"],
                 rows: [
                     ["Transaction ID", "UUID [PK]", "Унікальний ідентифікатор кожної окремої транзакції"],
-                    ["COD громади", "VARCHAR(50) [FK]", "Зв'язок зі Статичним моніторингом / Переліком громад"],
+                    ["COD громади", "VARCHAR(50) [FK]", "Зв'язок зі Статичним моніторингом"],
                     ["admin_1", "VARCHAR(100)", "Область (мітка з рядків Tableau)"],
                     ["admin_3", "VARCHAR(100)", "Район/Громада (деталізація рядків)"],
                     ["theme", "VARCHAR(150)", "Тематика послуг (Земля та екологія тощо)"],
@@ -346,14 +345,12 @@
             }
         };
 
-        // Виправлені прямі та чисті зв'язки без перетинів і зайвих петлянь
         const connections = [
             { fromRow: 'row-hromadas-cod', toRow: 'row-monitoring-cod', cardFrom: 'card-hromadas', cardTo: 'card-monitoring', route: 'straight' },
-            { fromRow: 'row-prebooking-idf', toRow: 'row-monitoring-idf', cardFrom: 'card-prebooking', cardTo: 'card-monitoring', route: 'straight' },
+            { fromRow: 'row-prebooking-idf', toRow: 'row-monitoring-idf', cardFrom: 'card-prebooking', cardTo: 'card-monitoring', route: 'left-bypass' },
             { fromRow: 'row-prebooking-idf', toRow: 'row-quality-idf', cardFrom: 'card-prebooking', cardTo: 'card-quality', route: 'straight' },
             { fromRow: 'row-monitoring-idf', toRow: 'row-quality-idf', cardFrom: 'card-monitoring', cardTo: 'card-quality', route: 'straight' },
-            // Динамічний журнал тепер іде чітко від Статичного моніторингу по COD громади
-            { fromRow: 'row-monitoring-cod', toRow: 'row-tx-cod', cardFrom: 'card-monitoring', cardTo: 'card-transactions', route: 'straight' }
+            { fromRow: 'row-monitoring-cod', toRow: 'row-tx-cod', cardFrom: 'card-monitoring', cardTo: 'card-transactions', route: 'bottom-around-quality' }
         ];
 
         function drawLines() {
@@ -375,8 +372,25 @@
                 const x2 = r2.left - wRect.left;
                 const y2 = r2.top + r2.height / 2 - wRect.top;
 
-                const dx = Math.abs(x2 - x1) * 0.5;
-                const pathData = `M ${x1} ${y1} C ${x1 + dx} ${y1}, ${x2 - dx} ${y2}, ${x2} ${y2}`;
+                let pathData = "";
+
+                if (conn.route === 'left-bypass') {
+                    // Лінія попереднього запису до моніторингу йде зліва (зовнішній обхід)
+                    const lx1 = r1.left - wRect.left;
+                    const lx2 = r2.left - wRect.left;
+                    pathData = `M ${lx1} ${y1} C ${lx1 - 70} ${y1}, ${lx2 - 70} ${y2}, ${lx2} ${y2}`;
+                } else if (conn.route === 'bottom-around-quality') {
+                    // Лінія стат.моніторинг -> динамічний журнал повністю огинає модуль якості знизу
+                    const startX = r1.right - wRect.left;
+                    const startY = r1.top + r1.height / 2 - wRect.top;
+                    const endX = r2.left - wRect.left;
+                    const endY = r2.top + r2.height / 2 - wRect.top;
+                    // Пункти керування кривої проходять глибоко вниз під модулем якості
+                    pathData = `M ${startX} ${startY} C ${startX + 120} ${startY + 140}, ${endX - 120} ${endY + 140}, ${endX} ${endY}`;
+                } else {
+                    const dx = Math.abs(x2 - x1) * 0.5;
+                    pathData = `M ${x1} ${y1} C ${x1 + dx} ${y1}, ${x2 - dx} ${y2}, ${x2} ${y2}`;
+                }
 
                 const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
                 path.setAttribute('d', pathData);

@@ -225,14 +225,14 @@
     <div class="top-bar">
         <h2>Архітектурна схема даних (з інтерактивними прикладами таблиць)</h2>
         <div class="sync-badge">
-            <span>⚡ СХЕМУ ОНОВЛЕНО: НЕКЛЮЧОВІ ПОЛЯ ЗОБРАЖЕНО ЗВЕРХУ</span>
+            <span>⚡ СХЕМУ ОНОВЛЕНО З УРАХУВАННЯМ ПЕРІОДУ ТА ДИНАМІКИ</span>
         </div>
     </div>
 
     <div class="schema-workspace" id="workspace">
         <svg class="connections-layer" id="svg-lines"></svg>
 
-        <!-- Блок 1: Перелік громад -->
+        <!-- Блок 1: Перелік громад (Без змін) -->
         <div class="db-card" id="card-hromadas" onclick="selectCard('hromadas')">
             <div class="db-header">📂 Перелік громад</div>
             <div class="db-rows">
@@ -248,7 +248,7 @@
             <div class="db-header">📅 Підсистема попереднього запису</div>
             <div class="db-rows">
                 <div class="db-row key" id="row-prebooking-idf"><span class="field-name">🔑 IDF</span></div>
-                <div class="db-row"><span>період</span></div>
+                <div class="db-row key" id="row-prebooking-period"><span class="field-name">🔑 період</span></div>
                 <div class="db-row"><span>Зареєстровано</span></div>
                 <div class="db-row"><span>Не відбулося</span></div>
                 <div class="db-row"><span>Завершені</span></div>
@@ -261,9 +261,7 @@
             <div class="db-header">📊 Статичний моніторинг</div>
             <div class="db-rows">
                 <div class="db-row key" id="row-monitoring-idf"><span class="field-name">🔑 IDF</span></div>
-                <div class="db-row"><span>коротка назва</span></div>
-                <div class="db-row"><span>тип точки</span></div>
-                <div class="db-row"><span>період</span></div>
+                <div class="db-row key" id="row-monitoring-period"><span class="field-name">🔑 період</span></div>
                 <div class="db-row key" id="row-monitoring-cod"><span class="field-name">🔑 COD громади</span></div>
                 <div class="db-row"><span>Наявність ІС</span></div>
                 <div class="db-row"><span>Загальна кількість послуг</span></div>
@@ -277,14 +275,14 @@
             <div class="db-header">⭐ Модуль оцінки якості</div>
             <div class="db-rows">
                 <div class="db-row key" id="row-quality-idf"><span class="field-name">🔑 IDF</span></div>
-                <div class="db-row"><span>період</span></div>
+                <div class="db-row key" id="row-quality-period"><span class="field-name">🔑 період</span></div>
                 <div class="db-row"><span>CSI</span></div>
                 <div class="db-row"><span>NPS</span></div>
                 <div class="db-row"><span>Кількість відгуків</span></div>
             </div>
         </div>
 
-        <!-- Блок 5: Динамічний потік транзакцій (Tableau) -->
+        <!-- Блок 5: Динамічний потік транзакцій (Без поля період, бо є create) -->
         <div class="db-card" id="card-transactions" onclick="selectCard('transactions')">
             <div class="db-header">⚡ Динамічний журнал послуг (Tableau)</div>
             <div class="db-rows">
@@ -324,7 +322,7 @@
                 specHeaders: ["Поле", "Тип даних", "Опис"],
                 specRows: [
                     ["IDF", "VARCHAR(50) [PK]", "Ідентифікатор / Код запису"],
-                    ["період", "VARCHAR(20)", "Звітний період (квартал)"],
+                    ["період", "VARCHAR(20) [PK]", "Звітний період (квартал)"],
                     ["Зареєстровано", "INT", "Кількість зареєстрованих візитів"],
                     ["Не відбулося", "INT", "Кількість нереалізованих візитів"],
                     ["Завершені", "INT", "Успішно надані послуги"],
@@ -342,7 +340,7 @@
                 specHeaders: ["Поле", "Тип даних", "Опис"],
                 specRows: [
                     ["IDF", "INT [FK]", "Ідентифікатор запису"],
-                    ["період", "VARCHAR(20)", "Звітний період"],
+                    ["період", "VARCHAR(20) [PK]", "Звітний період"],
                     ["CSI", "DECIMAL(5,4)", "Індекс задоволеності клієнтів"],
                     ["NPS", "DECIMAL(6,4)", "Індекс споживчої лояльності"],
                     ["Кількість відгуків", "INT", "Сумарна кількість оцінок"]
@@ -373,17 +371,15 @@
                 specHeaders: ["Поле", "Тип даних", "Опис"],
                 specRows: [
                     ["IDF", "INT [FK]", "Зв'язок"],
-                    ["коротка назва", "VARCHAR(150)", "Коротка назва ЦНАП/точки"],
-                    ["тип точки", "VARCHAR(50)", "Тип об'єкта (ЦНАП, віддалене робоче місце тощо)"],
-                    ["період", "VARCHAR(20)", "Звітний період"],
+                    ["період", "VARCHAR(20) [PK]", "Звітний період"],
                     ["COD громади", "VARCHAR(50) [FK]", "Код громади"],
                     ["Наявність ІС", "BOOLEAN", "Інтернет-мережа"],
                     ["Загальна кількість послуг", "INT", "Всього послуг"]
                 ],
-                previewHeaders: ["IDF", "коротка назва", "тип точки", "період", "Загальна к-сть"],
+                previewHeaders: ["IDF", "період", "COD громади", "Наявність ІС", "Загальна к-сть"],
                 previewRows: [
-                    ["SN25000022", "ЦНАП Бровари", "Центральний офіс", "2026-Q1", "4500"],
-                    ["SN23000002", "ЦНАП Львів", "Центральний офіс", "2026-Q1", "3100"]
+                    ["SN25000022", "2026-Q1", "UA3202001", "true", "4500"],
+                    ["SN23000002", "2026-Q1", "UA4606001", "true", "3100"]
                 ]
             },
             transactions: {
@@ -491,7 +487,7 @@
             prevHtml += `</tr></thead><tbody>`;
             data.previewRows.forEach(row => {
                 prevHtml += `<tr>`;
-                row.forEach(cell => prevHtml += `<td>${cell}</td>`);
+                row.forEach(cell => specHtml += `<td>${cell}</td>`);
                 prevHtml += `</tr>`;
             });
             prevHtml += `</tbody></table>`;

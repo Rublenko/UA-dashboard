@@ -225,14 +225,13 @@
     <div class="top-bar">
         <h2>Архітектурна схема даних (з інтерактивними прикладами таблиць)</h2>
         <div class="sync-badge">
-            <span>⚡ МОНІТОРИНГ ОНОВЛЕНО (БЕЗ КОДУ ГРОМАДИ)</span>
+            <span>⚡ СТАТИЧНИЙ МОНІТОРИНГ ОНОВЛЕНО</span>
         </div>
     </div>
 
     <div class="schema-workspace" id="workspace">
         <svg class="connections-layer" id="svg-lines"></svg>
 
-        <!-- Блок 1: Перелік громад -->
         <div class="db-card" id="card-hromadas" onclick="selectCard('hromadas')">
             <div class="db-header">📂 Перелік громад</div>
             <div class="db-rows">
@@ -243,7 +242,6 @@
             </div>
         </div>
 
-        <!-- Блок 2: Попередній запис -->
         <div class="db-card" id="card-prebooking" onclick="selectCard('prebooking')">
             <div class="db-header">📅 Підсистема попереднього запису</div>
             <div class="db-rows">
@@ -256,21 +254,21 @@
             </div>
         </div>
 
-        <!-- Блок 3: Статичний моніторинг (прибрано код громади з картки) -->
         <div class="db-card" id="card-monitoring" onclick="selectCard('monitoring')">
             <div class="db-header">📊 Статичний моніторинг</div>
             <div class="db-rows">
+                <div class="db-row key" id="row-monitoring-cod"><span class="field-name">🔑 COD громади</span></div>
                 <div class="db-row key" id="row-monitoring-idf"><span class="field-name">🔑 IDF</span></div>
                 <div class="db-row key" id="row-monitoring-period"><span class="field-name">🔑 період</span></div>
                 <div class="db-row"><span>коротка назва</span></div>
                 <div class="db-row"><span>тип точки</span></div>
                 <div class="db-row"><span>Наявність ІС</span></div>
+                <div class="db-row"><span>Загальна кількість впроваджених послуг</span></div>
                 <div class="db-row"><span>Загальна кількість послуг згідно 1226</span></div>
                 <div class="db-row"><span>норма 1226</span></div>
             </div>
         </div>
 
-        <!-- Блок 4: Модуль якості -->
         <div class="db-card" id="card-quality" onclick="selectCard('quality')">
             <div class="db-header">⭐ Модуль оцінки якості</div>
             <div class="db-rows">
@@ -282,7 +280,6 @@
             </div>
         </div>
 
-        <!-- Блок 5: Динамічний потік транзакцій -->
         <div class="db-card" id="card-transactions" onclick="selectCard('transactions')">
             <div class="db-header">⚡ Динамічний журнал послуг</div>
             <div class="db-rows">
@@ -372,18 +369,20 @@
                 title: "Деталі таблиці: Статичний моніторинг",
                 specHeaders: ["Поле", "Тип даних", "Опис"],
                 specRows: [
+                    ["COD громади", "VARCHAR(30) [FK]", "Код громади"],
                     ["IDF", "INT [FK]", "Зв'язок з об'єктом"],
                     ["період", "VARCHAR(20) [PK]", "Звітний період"],
                     ["коротка назва", "VARCHAR(150)", "Коротка назва ЦНАП/точки"],
                     ["тип точки", "VARCHAR(50)", "Тип об'єкта"],
                     ["Наявність ІС", "VARCHAR(10)", "Наявність інформаційної системи (так/ні)"],
+                    ["Загальна кількість впроваджених послуг", "INT", "Фактично надаються"],
                     ["Загальна кількість послуг згідно 1226", "INT", "Послуги за ПКМУ 1226"],
                     ["норма 1226", "INT", "Нормативний показник"]
                 ],
-                previewHeaders: ["IDF", "тип точки", "Наявність ІС", "Послуг 1226", "Норма 1226"],
+                previewHeaders: ["IDF", "тип точки", "Впроваджено", "Послуг 1226", "Норма 1226"],
                 previewRows: [
-                    ["SN25000022", "ЦНАП", "так", "375", "410"],
-                    ["SN23000002", "Мобільний ЦНАП", "ні", "20", "-"]
+                    ["SN25000022", "ЦНАП", "350", "375", "410"],
+                    ["SN23000002", "Мобільний ЦНАП", "18", "20", "-"]
                 ]
             },
             transactions: {
@@ -400,7 +399,7 @@
                     ["result", "VARCHAR(50)", "Статус надання"],
                     ["Day of done_at", "DATE", "Дата завершення"],
                     ["Day of created_at", "DATE", "Дата створення"],
-                    ["Value", "INT", "Підсумкове значення (значення зі скріншоту)"]
+                    ["Value", "INT", "Підсумкове значення"]
                 ],
                 previewHeaders: ["admin_1", "admin_3", "theme", "service_name", "result", "done_at", "created_at", "val"],
                 previewRows: [
@@ -419,6 +418,7 @@
             { fromRow: 'row-prebooking-idf', toRow: 'row-monitoring-idf', cardFrom: 'card-prebooking', cardTo: 'card-monitoring', route: 'corridor-left' },
             { fromRow: 'row-prebooking-idf', toRow: 'row-quality-idf', cardFrom: 'card-prebooking', cardTo: 'card-quality', route: 'straight' },
             { fromRow: 'row-monitoring-idf', toRow: 'row-quality-idf', cardFrom: 'card-monitoring', cardTo: 'card-quality', route: 'straight' },
+            { fromRow: 'row-hromadas-cod', toRow: 'row-monitoring-cod', cardFrom: 'card-hromadas', cardTo: 'card-monitoring', route: 'straight' },
             { fromRow: 'row-hromadas-cod', toRow: 'row-tx-cod', cardFrom: 'card-hromadas', cardTo: 'card-transactions', route: 'bottom-around-quality' }
         ];
 

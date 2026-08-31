@@ -222,6 +222,7 @@
     <div class="schema-workspace" id="workspace">
         <svg class="connections-layer" id="svg-lines"></svg>
 
+        <!-- Блок 1: Перелік громад -->
         <div class="db-card" id="card-hromadas" onclick="selectCard('hromadas')">
             <div class="db-header">📂 Перелік громад</div>
             <div class="db-rows">
@@ -232,6 +233,7 @@
             </div>
         </div>
 
+        <!-- Блок 2: Попередній запис -->
         <div class="db-card" id="card-prebooking" onclick="selectCard('prebooking')">
             <div class="db-header">📅 Підсистема попереднього запису</div>
             <div class="db-rows">
@@ -244,6 +246,7 @@
             </div>
         </div>
 
+        <!-- Блок 3: Статичний моніторинг -->
         <div class="db-card" id="card-monitoring" onclick="selectCard('monitoring')">
             <div class="db-header">📊 Статичний моніторинг</div>
             <div class="db-rows">
@@ -259,6 +262,7 @@
             </div>
         </div>
 
+        <!-- Блок 4: Модуль якості -->
         <div class="db-card" id="card-quality" onclick="selectCard('quality')">
             <div class="db-header">⭐ Модуль оцінки якості</div>
             <div class="db-rows">
@@ -270,6 +274,7 @@
             </div>
         </div>
 
+        <!-- Блок 5: Динамічний потік транзакцій -->
         <div class="db-card" id="card-transactions" onclick="selectCard('transactions')">
             <div class="db-header">⚡ Динамічний журнал послуг</div>
             <div class="db-rows">
@@ -326,10 +331,10 @@
             },
             monitoring: {
                 title: "Деталі таблиці: Статичний моніторинг",
-                previewHeaders: ["IDF", "тип точки", "Впроваджено", "Послуг 1226", "Норма 1226"],
+                previewHeaders: ["IDF", "період", "коротка назва", "тип точки", "Впроваджено", "Послуг 1226", "Норма 1226"],
                 previewRows: [
-                    ["SN25000022", "ЦНАП", "350", "375", "410"],
-                    ["SN23000002", "Мобільний ЦНАП", "18", "20", "-"]
+                    ["SN25000022", "2026-Q1", "ЦНАП Броварської міської ради", "ЦНАП", "350", "375", "410"],
+                    ["SN23000002", "2026-Q1", "Мобільний ЦНАП №1", "Мобільний ЦНАП", "18", "20", "-"]
                 ]
             },
             transactions: {

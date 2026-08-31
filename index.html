@@ -225,7 +225,7 @@
     <div class="top-bar">
         <h2>Архітектурна схема даних (з інтерактивними прикладами таблиць)</h2>
         <div class="sync-badge">
-            <span>⚡ ЗАМІНЕНО TRANSACTION ID НА IDF У ЖУРНАЛІ ПОСЛУГ</span>
+            <span>⚡ ДОДАНО ПОЛЯ DONE-AT ТА VALUE У ЖУРНАЛ ПОСЛУГ</span>
         </div>
     </div>
 
@@ -285,9 +285,9 @@
             </div>
         </div>
 
-        <!-- Блок 5: Динамічний потік транзакцій (Tableau) -->
+        <!-- Блок 5: Динамічний потік транзакцій -->
         <div class="db-card" id="card-transactions" onclick="selectCard('transactions')">
-            <div class="db-header">⚡ Динамічний журнал послуг (Tableau)</div>
+            <div class="db-header">⚡ Динамічний журнал послуг</div>
             <div class="db-rows">
                 <div class="db-row key" id="row-tx-idf"><span class="field-name">🔑 IDF</span></div>
                 <div class="db-row key" id="row-tx-create"><span class="field-name">🔑 create (дата)</span></div>
@@ -297,6 +297,8 @@
                 <div class="db-row"><span>theme (тематика)</span></div>
                 <div class="db-row"><span>service_name (назва послуги)</span></div>
                 <div class="db-row"><span>result (статус)</span></div>
+                <div class="db-row"><span>done_at</span></div>
+                <div class="db-row"><span>Value</span></div>
             </div>
         </div>
     </div>
@@ -389,19 +391,21 @@
                 ]
             },
             transactions: {
-                title: "Деталі таблиці: Динамічний журнал послуг (Tableau)",
-                specHeaders: ["Поле в Tableau", "Тип даних", "Опис"],
+                title: "Деталі таблиці: Динамічний журнал послуг",
+                specHeaders: ["Поле", "Тип даних", "Опис"],
                 specRows: [
                     ["IDF", "VARCHAR(50) [PK]", "Ідентифікатор об'єкта"],
                     ["create", "TIMESTAMP [PK]", "Дата та час створення транзакції"],
                     ["COD громади", "VARCHAR(50) [FK]", "Код громади"],
                     ["admin_1", "VARCHAR(100)", "Область"],
-                    ["result", "VARCHAR(50)", "Статус"]
+                    ["result", "VARCHAR(50)", "Статус"],
+                    ["done_at", "TIMESTAMP", "Дата та час завершення"],
+                    ["Value", "INT / DECIMAL", "Кількісний показник або вартість"]
                 ],
-                previewHeaders: ["IDF", "create", "COD громади", "admin_1", "result"],
+                previewHeaders: ["IDF", "create", "result", "done_at", "Value"],
                 previewRows: [
-                    ["SN25000022", "2026-03-30 10:15:00", "UA3202001", "Київська", "надано"],
-                    ["SN23000002", "2026-03-30 11:20:00", "UA4606001", "Львівська", "прострочено"]
+                    ["SN25000022", "2026-03-30 10:15:00", "надано", "2026-03-30 10:45:00", "1"],
+                    ["SN23000002", "2026-03-30 11:20:00", "прострочено", "2026-03-30 12:00:00", "1"]
                 ]
             }
         };

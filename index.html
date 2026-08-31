@@ -222,7 +222,6 @@
     <div class="schema-workspace" id="workspace">
         <svg class="connections-layer" id="svg-lines"></svg>
 
-        <!-- Блок 1: Перелік громад -->
         <div class="db-card" id="card-hromadas" onclick="selectCard('hromadas')">
             <div class="db-header">📂 Перелік громад</div>
             <div class="db-rows">
@@ -233,7 +232,6 @@
             </div>
         </div>
 
-        <!-- Блок 2: Попередній запис -->
         <div class="db-card" id="card-prebooking" onclick="selectCard('prebooking')">
             <div class="db-header">📅 Підсистема попереднього запису</div>
             <div class="db-rows">
@@ -246,7 +244,6 @@
             </div>
         </div>
 
-        <!-- Блок 3: Статичний моніторинг -->
         <div class="db-card" id="card-monitoring" onclick="selectCard('monitoring')">
             <div class="db-header">📊 Статичний моніторинг</div>
             <div class="db-rows">
@@ -262,7 +259,6 @@
             </div>
         </div>
 
-        <!-- Блок 4: Модуль якості -->
         <div class="db-card" id="card-quality" onclick="selectCard('quality')">
             <div class="db-header">⭐ Модуль оцінки якості</div>
             <div class="db-rows">
@@ -274,14 +270,11 @@
             </div>
         </div>
 
-        <!-- Блок 5: Динамічний потік транзакцій -->
         <div class="db-card" id="card-transactions" onclick="selectCard('transactions')">
             <div class="db-header">⚡ Динамічний журнал послуг</div>
             <div class="db-rows">
                 <div class="db-row key" id="row-tx-idf"><span class="field-name">🔑 IDF</span></div>
                 <div class="db-row key" id="row-tx-create"><span class="field-name">🔑 create (дата)</span></div>
-                <div class="db-row"><span>admin_1 (область)</span></div>
-                <div class="db-row"><span>admin_3 (район/громада)</span></div>
                 <div class="db-row"><span>theme (тематика)</span></div>
                 <div class="db-row"><span>service_name (назва послуги)</span></div>
                 <div class="db-row"><span>result (статус)</span></div>
@@ -338,12 +331,12 @@
             },
             transactions: {
                 title: "Деталі таблиці: Динамічний журнал послуг (Зв'язок з моніторингом по IDF та create)",
-                previewHeaders: ["IDF", "create", "admin_1", "admin_3", "theme", "service_name", "result", "done_at", "Value"],
+                previewHeaders: ["IDF", "create", "theme", "service_name", "result", "done_at", "Value"],
                 previewRows: [
-                    ["SN25000022", "12 лист 2024", "Вінницька", "Вендичанська", "Земля та екологія", "Видача довідки...", "надано/вчасно", "12 лист 2024", "1"],
-                    ["SN25000022", "3 квіт 2025", "Вінницька", "Вендичанська", "Земля та екологія", "Видача довідки...", "надано/вчасно", "3 квіт 2025", "1"],
-                    ["SN23000002", "2 вер 2025", "Вінницька", "Вендичанська", "Земля та екологія", "Видача довідки...", "надано/вчасно", "4 вер 2025", "1"],
-                    ["SN23000002", "21 лют 2022", "Вінницька", "Вендичанська", "Земля та екологія", "Видача довідки...", "надано/прострочено", "10 бер 2022", "1"]
+                    ["SN25000022", "12 лист 2024", "Земля та екологія", "Видача довідки...", "надано/вчасно", "12 лист 2024", "1"],
+                    ["SN25000022", "3 квіт 2025", "Земля та екологія", "Видача довідки...", "надано/вчасно", "3 квіт 2025", "1"],
+                    ["SN23000002", "2 вер 2025", "Земля та екологія", "Видача довідки...", "надано/вчасно", "4 вер 2025", "1"],
+                    ["SN23000002", "21 лют 2022", "Земля та екологія", "Видача довідки...", "надано/прострочено", "10 бер 2022", "1"]
                 ]
             }
         };

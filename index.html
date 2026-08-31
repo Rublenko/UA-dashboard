@@ -225,14 +225,14 @@
     <div class="top-bar">
         <h2>Архітектурна схема даних (з інтерактивними прикладами таблиць)</h2>
         <div class="sync-badge">
-            <span>⚡ ПОПЕРЕДНІЙ ЗАПИС ОНОВЛЕНО ЗА СКРИНШОТОМ</span>
+            <span>⚡ СХЕМУ ОНОВЛЕНО З УРАХУВАННЯМ ПЕРІОДУ ТА ДИНАМІКИ</span>
         </div>
     </div>
 
     <div class="schema-workspace" id="workspace">
         <svg class="connections-layer" id="svg-lines"></svg>
 
-        <!-- Блок 1: Перелік громад -->
+        <!-- Блок 1: Перелік громад (Без змін) -->
         <div class="db-card" id="card-hromadas" onclick="selectCard('hromadas')">
             <div class="db-header">📂 Перелік громад</div>
             <div class="db-rows">
@@ -248,6 +248,7 @@
             <div class="db-header">📅 Підсистема попереднього запису</div>
             <div class="db-rows">
                 <div class="db-row key" id="row-prebooking-idf"><span class="field-name">🔑 IDF</span></div>
+                <div class="db-row key" id="row-prebooking-period"><span class="field-name">🔑 період</span></div>
                 <div class="db-row"><span>Зареєстровано</span></div>
                 <div class="db-row"><span>Не відбулося</span></div>
                 <div class="db-row"><span>Завершені</span></div>
@@ -260,6 +261,7 @@
             <div class="db-header">📊 Статичний моніторинг</div>
             <div class="db-rows">
                 <div class="db-row key" id="row-monitoring-idf"><span class="field-name">🔑 IDF</span></div>
+                <div class="db-row key" id="row-monitoring-period"><span class="field-name">🔑 період</span></div>
                 <div class="db-row key" id="row-monitoring-cod"><span class="field-name">🔑 COD громади</span></div>
                 <div class="db-row"><span>Наявність ІС</span></div>
                 <div class="db-row"><span>Загальна кількість послуг</span></div>
@@ -273,23 +275,24 @@
             <div class="db-header">⭐ Модуль оцінки якості</div>
             <div class="db-rows">
                 <div class="db-row key" id="row-quality-idf"><span class="field-name">🔑 IDF</span></div>
+                <div class="db-row key" id="row-quality-period"><span class="field-name">🔑 період</span></div>
                 <div class="db-row"><span>CSI</span></div>
                 <div class="db-row"><span>NPS</span></div>
                 <div class="db-row"><span>Кількість відгуків</span></div>
             </div>
         </div>
 
-        <!-- Блок 5: Динамічний потік транзакцій (Tableau) -->
+        <!-- Блок 5: Динамічний потік транзакцій (Без поля період, бо є create) -->
         <div class="db-card" id="card-transactions" onclick="selectCard('transactions')">
             <div class="db-header">⚡ Динамічний журнал послуг (Tableau)</div>
             <div class="db-rows">
                 <div class="db-row key" id="row-tx-id"><span class="field-name">🔑 Transaction ID</span></div>
+                <div class="db-row key" id="row-tx-create"><span class="field-name">🔑 create (дата)</span></div>
                 <div class="db-row key" id="row-tx-cod"><span class="field-name">🔑 COD громади</span></div>
                 <div class="db-row"><span>admin_1 (область)</span></div>
                 <div class="db-row"><span>admin_3 (район/громада)</span></div>
                 <div class="db-row"><span>theme (тематика)</span></div>
                 <div class="db-row"><span>service_name (назва послуги)</span></div>
-                <div class="db-row"><span>Quarter (квартал)</span></div>
                 <div class="db-row"><span>result (статус)</span></div>
             </div>
         </div>
@@ -319,21 +322,17 @@
                 specHeaders: ["Поле", "Тип даних", "Опис"],
                 specRows: [
                     ["IDF", "VARCHAR(50) [PK]", "Ідентифікатор / Код запису"],
+                    ["період", "VARCHAR(20) [PK]", "Звітний період (квартал)"],
                     ["Зареєстровано", "INT", "Кількість зареєстрованих візитів"],
                     ["Не відбулося", "INT", "Кількість нереалізованих візитів"],
                     ["Завершені", "INT", "Успішно надані послуги"],
                     ["Скасовані", "INT", "Скасовані записи"]
                 ],
-                previewHeaders: ["IDF", "Зареєстровано", "Не відбулося", "Завершені", "Скасовані"],
+                previewHeaders: ["IDF", "період", "Зареєстровано", "Завершені", "Скасовані"],
                 previewRows: [
-                    ["(Всього)", "10335", "916", "9066", "353"],
-                    ["SN2500002", "5648", "541", "4646", "461"],
-                    ["SN2300000", "2858", "619", "1783", "456"],
-                    ["SN1700001", "2003", "172", "1822", "9"],
-                    ["SN0200005", "1958", "434", "1517", "7"],
-                    ["SN0900013", "1846", "1325", "509", "12"],
-                    ["SN0900001", "1013", "539", "468", "6"],
-                    ["SN2300044", "679", "679", "0", "0"]
+                    ["(Всього)", "2026-Q1", "10335", "9066", "353"],
+                    ["SN2500002", "2026-Q1", "5648", "4646", "461"],
+                    ["SN2300000", "2026-Q1", "2858", "1783", "456"]
                 ]
             },
             quality: {
@@ -341,20 +340,15 @@
                 specHeaders: ["Поле", "Тип даних", "Опис"],
                 specRows: [
                     ["IDF", "INT [FK]", "Ідентифікатор запису"],
+                    ["період", "VARCHAR(20) [PK]", "Звітний період"],
                     ["CSI", "DECIMAL(5,4)", "Індекс задоволеності клієнтів"],
                     ["NPS", "DECIMAL(6,4)", "Індекс споживчої лояльності"],
                     ["Кількість відгуків", "INT", "Сумарна кількість оцінок"]
                 ],
-                previewHeaders: ["IDF", "CSI", "NPS", "Кількість відгуків"],
+                previewHeaders: ["IDF", "період", "CSI", "NPS", "Кількість відгуків"],
                 previewRows: [
-                    ["SN25000022", "99,852", "99,3212", "22984"],
-                    ["SN23000002", "99,1955", "96,9684", "14545"],
-                    ["SN17000013", "98,9921", "94,9291", "3175"],
-                    ["SN02000053", "99,9299", "99,4395", "2855"],
-                    ["SN09000139", "99,8719", "99,1887", "2342"],
-                    ["SN09000018", "93,8314", "84,1876", "2302"],
-                    ["SN23000443", "99,8944", "99,3664", "1894"],
-                    ["SN07000005", "99,3456", "96,6091", "1681"]
+                    ["SN25000022", "2026-Q1", "99,852", "99,3212", "22984"],
+                    ["SN23000002", "2026-Q1", "99,1955", "96,9684", "14545"]
                 ]
             },
             hromadas: {
@@ -369,8 +363,7 @@
                 previewHeaders: ["область", "район", "громада", "COD громади"],
                 previewRows: [
                     ["Київська", "Броварський", "Броварська міська", "UA3202001"],
-                    ["Львівська", "Львівський", "Львівська міська", "UA4606001"],
-                    ["Одеській", "Одеський", "Одеська міська", "UA5110001"]
+                    ["Львівська", "Львівський", "Львівська міська", "UA4606001"]
                 ]
             },
             monitoring: {
@@ -378,14 +371,15 @@
                 specHeaders: ["Поле", "Тип даних", "Опис"],
                 specRows: [
                     ["IDF", "INT [FK]", "Зв'язок"],
+                    ["період", "VARCHAR(20) [PK]", "Звітний період"],
                     ["COD громади", "VARCHAR(50) [FK]", "Код громади"],
                     ["Наявність ІС", "BOOLEAN", "Інтернет-мережа"],
                     ["Загальна кількість послуг", "INT", "Всього послуг"]
                 ],
-                previewHeaders: ["IDF", "COD громади", "Наявність ІС", "Загальна к-сть"],
+                previewHeaders: ["IDF", "період", "COD громади", "Наявність ІС", "Загальна к-сть"],
                 previewRows: [
-                    ["SN25000022", "UA3202001", "true", "4500"],
-                    ["SN23000002", "UA4606001", "true", "3100"]
+                    ["SN25000022", "2026-Q1", "UA3202001", "true", "4500"],
+                    ["SN23000002", "2026-Q1", "UA4606001", "true", "3100"]
                 ]
             },
             transactions: {
@@ -393,14 +387,15 @@
                 specHeaders: ["Поле в Tableau", "Тип даних", "Опис"],
                 specRows: [
                     ["Transaction ID", "UUID [PK]", "Унікальний ID"],
+                    ["create", "TIMESTAMP [PK]", "Дата та час створення транзакції"],
                     ["COD громади", "VARCHAR(50) [FK]", "Код громади"],
                     ["admin_1", "VARCHAR(100)", "Область"],
                     ["result", "VARCHAR(50)", "Статус"]
                 ],
-                previewHeaders: ["Transaction ID", "COD громади", "admin_1", "result"],
+                previewHeaders: ["Transaction ID", "create", "COD громади", "admin_1", "result"],
                 previewRows: [
-                    ["a1b2-c3d4", "UA3202001", "Київська", "надано"],
-                    ["e5f6-g7h8", "UA4606001", "Львівська", "прострочено"]
+                    ["a1b2-c3d4", "2026-03-30 10:15:00", "UA3202001", "Київська", "надано"],
+                    ["e5f6-g7h8", "2026-03-30 11:20:00", "UA4606001", "Львівська", "прострочено"]
                 ]
             }
         };
@@ -476,7 +471,6 @@
 
             document.getElementById('drawer-title').innerText = data.title;
 
-            // Генерація специфікації (ліва колонка)
             let specHtml = `<table class="detail-table"><thead><tr>`;
             data.specHeaders.forEach(h => specHtml += `<th>${h}</th>`);
             specHtml += `</tr></thead><tbody>`;
@@ -488,13 +482,12 @@
             specHtml += `</tbody></table>`;
             document.getElementById('drawer-spec-content').innerHTML = specHtml;
 
-            // Генерація зразка даних (права колонка)
             let prevHtml = `<table class="detail-table"><thead><tr>`;
             data.previewHeaders.forEach(h => prevHtml += `<th>${h}</th>`);
             prevHtml += `</tr></thead><tbody>`;
             data.previewRows.forEach(row => {
                 prevHtml += `<tr>`;
-                row.forEach(cell => prevHtml += `<td>${cell}</td>`);
+                row.forEach(cell => specHtml += `<td>${cell}</td>`);
                 prevHtml += `</tr>`;
             });
             prevHtml += `</tbody></table>`;

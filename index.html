@@ -225,7 +225,7 @@
     <div class="top-bar">
         <h2>Архітектурна схема даних (з інтерактивними прикладами таблиць)</h2>
         <div class="sync-badge">
-            <span>⚡ ГОЛОВНІ ЗНАЧЕННЯ ЗІ СКРИНШОТУ ДОДАНО</span>
+            <span>⚡ МОНІТОРИНГ ОНОВЛЕНО (БЕЗ КОДУ ГРОМАДИ)</span>
         </div>
     </div>
 
@@ -256,13 +256,12 @@
             </div>
         </div>
 
-        <!-- Блок 3: Статичний моніторинг -->
+        <!-- Блок 3: Статичний моніторинг (прибрано код громади з картки) -->
         <div class="db-card" id="card-monitoring" onclick="selectCard('monitoring')">
             <div class="db-header">📊 Статичний моніторинг</div>
             <div class="db-rows">
                 <div class="db-row key" id="row-monitoring-idf"><span class="field-name">🔑 IDF</span></div>
                 <div class="db-row key" id="row-monitoring-period"><span class="field-name">🔑 період</span></div>
-                <div class="db-row key" id="row-monitoring-cod"><span class="field-name">🔑 COD громади</span></div>
                 <div class="db-row"><span>коротка назва</span></div>
                 <div class="db-row"><span>тип точки</span></div>
                 <div class="db-row"><span>Наявність ІС</span></div>
@@ -375,7 +374,6 @@
                 specRows: [
                     ["IDF", "INT [FK]", "Зв'язок з об'єктом"],
                     ["період", "VARCHAR(20) [PK]", "Звітний період"],
-                    ["COD громади", "VARCHAR(30) [FK]", "Код громади"],
                     ["коротка назва", "VARCHAR(150)", "Коротка назва ЦНАП/точки"],
                     ["тип точки", "VARCHAR(50)", "Тип об'єкта"],
                     ["Наявність ІС", "VARCHAR(10)", "Наявність інформаційної системи (так/ні)"],
@@ -418,11 +416,10 @@
         };
 
         const connections = [
-            { fromRow: 'row-hromadas-cod', toRow: 'row-monitoring-cod', cardFrom: 'card-hromadas', cardTo: 'card-monitoring', route: 'straight' },
             { fromRow: 'row-prebooking-idf', toRow: 'row-monitoring-idf', cardFrom: 'card-prebooking', cardTo: 'card-monitoring', route: 'corridor-left' },
             { fromRow: 'row-prebooking-idf', toRow: 'row-quality-idf', cardFrom: 'card-prebooking', cardTo: 'card-quality', route: 'straight' },
             { fromRow: 'row-monitoring-idf', toRow: 'row-quality-idf', cardFrom: 'card-monitoring', cardTo: 'card-quality', route: 'straight' },
-            { fromRow: 'row-monitoring-cod', toRow: 'row-tx-cod', cardFrom: 'card-monitoring', cardTo: 'card-transactions', route: 'bottom-around-quality' }
+            { fromRow: 'row-hromadas-cod', toRow: 'row-tx-cod', cardFrom: 'card-hromadas', cardTo: 'card-transactions', route: 'bottom-around-quality' }
         ];
 
         function drawLines() {
@@ -454,7 +451,7 @@
                     const startY = r1.top + r1.height / 2 - wRect.top;
                     const endX = r2.left - wRect.left;
                     const endY = r2.top + r2.height / 2 - wRect.top;
-                    pathData = `M ${startX} ${startY} C ${startX + 120} ${startY + 150}, ${endX - 120} ${endY + 150}, ${endX} ${endY}`;
+                    pathData = `M ${startX} ${startY} C ${startX + 180} ${startY + 180}, ${endX - 120} ${endY + 180}, ${endX} ${endY}`;
                 } else {
                     const straightX1 = r1.right - wRect.left;
                     const straightX2 = r2.left - wRect.left;

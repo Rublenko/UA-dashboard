@@ -225,14 +225,14 @@
     <div class="top-bar">
         <h2>Архітектурна схема даних (з інтерактивними прикладами таблиць)</h2>
         <div class="sync-badge">
-            <span>⚡ СХЕМУ ОНОВЛЕНО З УРАХУВАННЯМ ПЕРІОДУ ТА ДИНАМІКИ</span>
+            <span>⚡ ДОДАНО ПОЛЯ КОРОТКА НАЗВА ТА ТИП ТОЧКИ ДО МОНІТОРИНГУ</span>
         </div>
     </div>
 
     <div class="schema-workspace" id="workspace">
         <svg class="connections-layer" id="svg-lines"></svg>
 
-        <!-- Блок 1: Перелік громад (Без змін) -->
+        <!-- Блок 1: Перелік громад -->
         <div class="db-card" id="card-hromadas" onclick="selectCard('hromadas')">
             <div class="db-header">📂 Перелік громад</div>
             <div class="db-rows">
@@ -263,6 +263,8 @@
                 <div class="db-row key" id="row-monitoring-idf"><span class="field-name">🔑 IDF</span></div>
                 <div class="db-row key" id="row-monitoring-period"><span class="field-name">🔑 період</span></div>
                 <div class="db-row key" id="row-monitoring-cod"><span class="field-name">🔑 COD громади</span></div>
+                <div class="db-row"><span>коротка назва</span></div>
+                <div class="db-row"><span>тип точки</span></div>
                 <div class="db-row"><span>Наявність ІС</span></div>
                 <div class="db-row"><span>Загальна кількість послуг</span></div>
                 <div class="db-row"><span>Загальна кількість послуг згідно 1226</span></div>
@@ -282,7 +284,7 @@
             </div>
         </div>
 
-        <!-- Блок 5: Динамічний потік транзакцій (Без поля період, бо є create) -->
+        <!-- Блок 5: Динамічний потік транзакцій (Tableau) -->
         <div class="db-card" id="card-transactions" onclick="selectCard('transactions')">
             <div class="db-header">⚡ Динамічний журнал послуг (Tableau)</div>
             <div class="db-rows">
@@ -373,13 +375,15 @@
                     ["IDF", "INT [FK]", "Зв'язок"],
                     ["період", "VARCHAR(20) [PK]", "Звітний період"],
                     ["COD громади", "VARCHAR(50) [FK]", "Код громади"],
+                    ["коротка назва", "VARCHAR(150)", "Коротка назва ЦНАП/точки"],
+                    ["тип точки", "VARCHAR(50)", "Тип об'єкта"],
                     ["Наявність ІС", "BOOLEAN", "Інтернет-мережа"],
                     ["Загальна кількість послуг", "INT", "Всього послуг"]
                 ],
-                previewHeaders: ["IDF", "період", "COD громади", "Наявність ІС", "Загальна к-сть"],
+                previewHeaders: ["IDF", "період", "COD громади", "коротка назва", "тип точки"],
                 previewRows: [
-                    ["SN25000022", "2026-Q1", "UA3202001", "true", "4500"],
-                    ["SN23000002", "2026-Q1", "UA4606001", "true", "3100"]
+                    ["SN25000022", "2026-Q1", "UA3202001", "ЦНАП Бровари", "Центральний офіс"],
+                    ["SN23000002", "2026-Q1", "UA4606001", "ЦНАП Львів", "Центральний офіс"]
                 ]
             },
             transactions: {
@@ -487,7 +491,7 @@
             prevHtml += `</tr></thead><tbody>`;
             data.previewRows.forEach(row => {
                 prevHtml += `<tr>`;
-                row.forEach(cell => specHtml += `<td>${cell}</td>`);
+                row.forEach(cell => prevHtml += `<td>${cell}</td>`);
                 prevHtml += `</tr>`;
             });
             prevHtml += `</tbody></table>`;

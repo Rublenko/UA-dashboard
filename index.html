@@ -225,13 +225,14 @@
     <div class="top-bar">
         <h2>Архітектурна схема даних (з інтерактивними прикладами таблиць)</h2>
         <div class="sync-badge">
-            <span>⚡ СТАТИЧНИЙ МОНІТОРИНГ ОНОВЛЕНО</span>
+            <span>⚡ ПОЛЕ COD ГРОМАДИ ВИДАЛЕНО З ЖУРНАЛУ</span>
         </div>
     </div>
 
     <div class="schema-workspace" id="workspace">
         <svg class="connections-layer" id="svg-lines"></svg>
 
+        <!-- Блок 1: Перелік громад -->
         <div class="db-card" id="card-hromadas" onclick="selectCard('hromadas')">
             <div class="db-header">📂 Перелік громад</div>
             <div class="db-rows">
@@ -242,6 +243,7 @@
             </div>
         </div>
 
+        <!-- Блок 2: Попередній запис -->
         <div class="db-card" id="card-prebooking" onclick="selectCard('prebooking')">
             <div class="db-header">📅 Підсистема попереднього запису</div>
             <div class="db-rows">
@@ -254,6 +256,7 @@
             </div>
         </div>
 
+        <!-- Блок 3: Статичний моніторинг -->
         <div class="db-card" id="card-monitoring" onclick="selectCard('monitoring')">
             <div class="db-header">📊 Статичний моніторинг</div>
             <div class="db-rows">
@@ -269,6 +272,7 @@
             </div>
         </div>
 
+        <!-- Блок 4: Модуль якості -->
         <div class="db-card" id="card-quality" onclick="selectCard('quality')">
             <div class="db-header">⭐ Модуль оцінки якості</div>
             <div class="db-rows">
@@ -280,12 +284,12 @@
             </div>
         </div>
 
+        <!-- Блок 5: Динамічний потік транзакцій -->
         <div class="db-card" id="card-transactions" onclick="selectCard('transactions')">
             <div class="db-header">⚡ Динамічний журнал послуг</div>
             <div class="db-rows">
                 <div class="db-row key" id="row-tx-idf"><span class="field-name">🔑 IDF</span></div>
                 <div class="db-row key" id="row-tx-create"><span class="field-name">🔑 create (дата)</span></div>
-                <div class="db-row key" id="row-tx-cod"><span class="field-name">🔑 COD громади</span></div>
                 <div class="db-row"><span>admin_1 (область)</span></div>
                 <div class="db-row"><span>admin_3 (район/громада)</span></div>
                 <div class="db-row"><span>theme (тематика)</span></div>
@@ -391,7 +395,6 @@
                 specRows: [
                     ["IDF", "VARCHAR(50) [PK]", "Ідентифікатор об'єкта"],
                     ["create", "TIMESTAMP [PK]", "Дата створення"],
-                    ["COD громади", "VARCHAR(30) [FK]", "Код громади"],
                     ["admin_1", "VARCHAR(100)", "Область"],
                     ["admin_3", "VARCHAR(100)", "Район / Громада"],
                     ["theme", "VARCHAR(150)", "Тематика послуги"],
@@ -418,8 +421,7 @@
             { fromRow: 'row-prebooking-idf', toRow: 'row-monitoring-idf', cardFrom: 'card-prebooking', cardTo: 'card-monitoring', route: 'corridor-left' },
             { fromRow: 'row-prebooking-idf', toRow: 'row-quality-idf', cardFrom: 'card-prebooking', cardTo: 'card-quality', route: 'straight' },
             { fromRow: 'row-monitoring-idf', toRow: 'row-quality-idf', cardFrom: 'card-monitoring', cardTo: 'card-quality', route: 'straight' },
-            { fromRow: 'row-hromadas-cod', toRow: 'row-monitoring-cod', cardFrom: 'card-hromadas', cardTo: 'card-monitoring', route: 'straight' },
-            { fromRow: 'row-hromadas-cod', toRow: 'row-tx-cod', cardFrom: 'card-hromadas', cardTo: 'card-transactions', route: 'bottom-around-quality' }
+            { fromRow: 'row-hromadas-cod', toRow: 'row-monitoring-cod', cardFrom: 'card-hromadas', cardTo: 'card-monitoring', route: 'straight' }
         ];
 
         function drawLines() {
@@ -446,12 +448,6 @@
                 if (conn.route === 'corridor-left') {
                     const corridorX = 365;
                     pathData = `M ${x1} ${y1} C ${corridorX} ${y1}, ${corridorX} ${y2}, ${x2} ${y2}`;
-                } else if (conn.route === 'bottom-around-quality') {
-                    const startX = r1.right - wRect.left;
-                    const startY = r1.top + r1.height / 2 - wRect.top;
-                    const endX = r2.left - wRect.left;
-                    const endY = r2.top + r2.height / 2 - wRect.top;
-                    pathData = `M ${startX} ${startY} C ${startX + 180} ${startY + 180}, ${endX - 120} ${endY + 180}, ${endX} ${endY}`;
                 } else {
                     const straightX1 = r1.right - wRect.left;
                     const straightX2 = r2.left - wRect.left;

@@ -225,7 +225,7 @@
     <div class="top-bar">
         <h2>Архітектурна схема даних (з інтерактивними прикладами таблиць)</h2>
         <div class="sync-badge">
-            <span>⚡ ДОДАНО ПОЛЕ «НОРМА 1226» В МОНІТОРИНГ</span>
+            <span>⚡ ЗАМІНЕНО TRANSACTION ID НА IDF У ЖУРНАЛІ ПОСЛУГ</span>
         </div>
     </div>
 
@@ -289,7 +289,7 @@
         <div class="db-card" id="card-transactions" onclick="selectCard('transactions')">
             <div class="db-header">⚡ Динамічний журнал послуг (Tableau)</div>
             <div class="db-rows">
-                <div class="db-row key" id="row-tx-id"><span class="field-name">🔑 Transaction ID</span></div>
+                <div class="db-row key" id="row-tx-idf"><span class="field-name">🔑 IDF</span></div>
                 <div class="db-row key" id="row-tx-create"><span class="field-name">🔑 create (дата)</span></div>
                 <div class="db-row key" id="row-tx-cod"><span class="field-name">🔑 COD громади</span></div>
                 <div class="db-row"><span>admin_1 (область)</span></div>
@@ -392,16 +392,16 @@
                 title: "Деталі таблиці: Динамічний журнал послуг (Tableau)",
                 specHeaders: ["Поле в Tableau", "Тип даних", "Опис"],
                 specRows: [
-                    ["Transaction ID", "UUID [PK]", "Унікальний ID"],
+                    ["IDF", "VARCHAR(50) [PK]", "Ідентифікатор об'єкта"],
                     ["create", "TIMESTAMP [PK]", "Дата та час створення транзакції"],
                     ["COD громади", "VARCHAR(50) [FK]", "Код громади"],
                     ["admin_1", "VARCHAR(100)", "Область"],
                     ["result", "VARCHAR(50)", "Статус"]
                 ],
-                previewHeaders: ["Transaction ID", "create", "COD громади", "admin_1", "result"],
+                previewHeaders: ["IDF", "create", "COD громади", "admin_1", "result"],
                 previewRows: [
-                    ["a1b2-c3d4", "2026-03-30 10:15:00", "UA3202001", "Київська", "надано"],
-                    ["e5f6-g7h8", "2026-03-30 11:20:00", "UA4606001", "Львівська", "прострочено"]
+                    ["SN25000022", "2026-03-30 10:15:00", "UA3202001", "Київська", "надано"],
+                    ["SN23000002", "2026-03-30 11:20:00", "UA4606001", "Львівська", "прострочено"]
                 ]
             }
         };

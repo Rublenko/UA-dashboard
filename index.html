@@ -225,7 +225,7 @@
     <div class="top-bar">
         <h2>Архітектурна схема даних (з інтерактивними прикладами таблиць)</h2>
         <div class="sync-badge">
-            <span>⚡ ПОЛЕ COD ГРОМАДИ ВИДАЛЕНО З ЖУРНАЛУ</span>
+            <span>⚡ ЗВ'ЯЗОК ЖУРНАЛУ ТА МОНІТОРИНГУ ПО IDF / CREATE</span>
         </div>
     </div>
 
@@ -390,11 +390,11 @@
                 ]
             },
             transactions: {
-                title: "Деталі таблиці: Динамічний журнал послуг (Точна копія зрізу з Tableau)",
+                title: "Деталі таблиці: Динамічний журнал послуг (Зв'язок з моніторингом по IDF та create)",
                 specHeaders: ["Поле", "Тип даних", "Опис"],
                 specRows: [
-                    ["IDF", "VARCHAR(50) [PK]", "Ідентифікатор об'єкта"],
-                    ["create", "TIMESTAMP [PK]", "Дата створення"],
+                    ["IDF", "VARCHAR(50) [PK/FK]", "Ідентифікатор об'єкта (зв'язок з моніторингом)"],
+                    ["create", "TIMESTAMP [PK/FK]", "Дата створення (зв'язок з періодом/моніторингом)"],
                     ["admin_1", "VARCHAR(100)", "Область"],
                     ["admin_3", "VARCHAR(100)", "Район / Громада"],
                     ["theme", "VARCHAR(150)", "Тематика послуги"],
@@ -421,7 +421,8 @@
             { fromRow: 'row-prebooking-idf', toRow: 'row-monitoring-idf', cardFrom: 'card-prebooking', cardTo: 'card-monitoring', route: 'corridor-left' },
             { fromRow: 'row-prebooking-idf', toRow: 'row-quality-idf', cardFrom: 'card-prebooking', cardTo: 'card-quality', route: 'straight' },
             { fromRow: 'row-monitoring-idf', toRow: 'row-quality-idf', cardFrom: 'card-monitoring', cardTo: 'card-quality', route: 'straight' },
-            { fromRow: 'row-hromadas-cod', toRow: 'row-monitoring-cod', cardFrom: 'card-hromadas', cardTo: 'card-monitoring', route: 'straight' }
+            { fromRow: 'row-hromadas-cod', toRow: 'row-monitoring-cod', cardFrom: 'card-hromadas', cardTo: 'card-monitoring', route: 'straight' },
+            { fromRow: 'row-monitoring-idf', toRow: 'row-tx-idf', cardFrom: 'card-monitoring', cardTo: 'card-transactions', route: 'bottom-around-quality' }
         ];
 
         function drawLines() {
@@ -448,6 +449,12 @@
                 if (conn.route === 'corridor-left') {
                     const corridorX = 365;
                     pathData = `M ${x1} ${y1} C ${corridorX} ${y1}, ${corridorX} ${y2}, ${x2} ${y2}`;
+                } else if (conn.route === 'bottom-around-quality') {
+                    const startX = r1.right - wRect.left;
+                    const startY = r1.top + r1.height / 2 - wRect.top;
+                    const endX = r2.left - wRect.left;
+                    const endY = r2.top + r2.height / 2 - wRect.top;
+                    pathData = `M ${startX} ${startY} C ${startX + 180} ${startY + 200}, ${endX - 120} ${endY + 200}, ${endX} ${endY}`;
                 } else {
                     const straightX1 = r1.right - wRect.left;
                     const straightX2 = r2.left - wRect.left;

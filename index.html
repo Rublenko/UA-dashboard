@@ -11,6 +11,7 @@
             --card-bg: #1e293b;
             --border-color: #334155;
             --border-hover: #38bdf8;
+            --border-published: #ef4444;
             --accent-color: #38bdf8;
             --text-main: #f8fafc;
             --text-muted: #94a3b8;
@@ -83,9 +84,20 @@
             transition: all 0.25s ease;
         }
 
+        .db-card.published {
+            border: 1px solid var(--border-published);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5), 0 0 12px rgba(239, 68, 68, 0.15);
+        }
+
         .db-card:hover, .db-card.active {
             border-color: var(--border-hover);
             box-shadow: 0 0 25px rgba(56, 189, 248, 0.25);
+            transform: translateY(-2px);
+        }
+
+        .db-card.published:hover, .db-card.published.active {
+            border-color: var(--border-published);
+            box-shadow: 0 0 25px rgba(239, 68, 68, 0.35);
             transform: translateY(-2px);
         }
 
@@ -223,7 +235,7 @@
     <div class="schema-workspace" id="workspace">
         <svg class="connections-layer" id="svg-lines"></svg>
 
-        <div class="db-card" id="card-hromadas" onclick="selectCard('hromadas')">
+        <div class="db-card published" id="card-hromadas" onclick="selectCard('hromadas')">
             <div class="db-header">📂 Перелік громад (terhromada)</div>
             <div class="db-rows">
                 <div class="db-row"><span>область</span></div>
@@ -245,7 +257,7 @@
             </div>
         </div>
 
-        <div class="db-card" id="card-monitoring" onclick="selectCard('monitoring')">
+        <div class="db-card published" id="card-monitoring" onclick="selectCard('monitoring')">
             <div class="db-header">📊 Статичний моніторинг (static_agg)</div>
             <div class="db-rows">
                 <div class="db-row key" id="row-monitoring-cod"><span class="field-name">🔑 COD громади</span></div>
@@ -272,7 +284,7 @@
             </div>
         </div>
 
-        <div class="db-card" id="card-transactions" onclick="selectCard('transactions')">
+        <div class="db-card published" id="card-transactions" onclick="selectCard('transactions')">
             <div class="db-header">⚡ Динамічний журнал послуг (dynamic_agg)</div>
             <div class="db-rows">
                 <div class="db-row key" id="row-tx-idf"><span class="field-name">🔑 IDF</span></div>
@@ -284,8 +296,8 @@
             </div>
         </div>
 
-        <div class="db-card" id="card-services" onclick="selectCard('services')">
-            <div class="db-header">📚 Каталог послуг (тематичні)</div>
+        <div class="db-card published" id="card-services" onclick="selectCard('services')">
+            <div class="db-header">📚 Каталог послуг (тематичні) (services)</div>
             <div class="db-rows">
                 <div class="db-row key" id="row-services-code"><span class="field-name">🔑 service_id</span></div>
                 <div class="db-row"><span>theme</span></div>
@@ -351,7 +363,7 @@
                 ]
             },
             services: {
-                title: "Деталі довідника: Каталог послуг (тематичні)",
+                title: "Деталі довідника: Каталог послуг (тематичні) (services)",
                 previewHeaders: ["service_id", "theme", "category_name", "service_name"],
                 previewRows: [
                     ["479", "Транспорт", "Реєстрація, перереєстрація транспортних засобів", "Видача висновку щодо можливості дублювання ідентифікаційних номерів транспортних засобів"],

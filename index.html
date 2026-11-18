@@ -248,16 +248,16 @@
         <div class="db-card" id="card-monitoring" onclick="selectCard('monitoring')">
             <div class="db-header">📊 Статичний моніторинг (static_agg)</div>
             <div class="db-rows">
-                <div class="db-row key" id="row-monitoring-cod"><span class="field-name">🔑 hromada_cod</span></div>
-                <div class="db-row key" id="row-monitoring-idf"><span class="field-name">🔑 idf</span></div>
-                <div class="db-row key" id="row-monitoring-period"><span class="field-name">🔑 period</span></div>
-                <div class="db-row"><span>short_name</span></div>
-                <div class="db-row"><span>point_type</span></div>
-                <div class="db-row"><span>has_is</span></div>
-                <div class="db-row"><span>services_provided</span></div>
-                <div class="db-row"><span>services_implemented</span></div>
-                <div class="db-row"><span>services_1226</span></div>
-                <div class="db-row"><span>norm_1226</span></div>
+                <div class="db-row key" id="row-monitoring-cod"><span class="field-name">🔑 COD громади</span></div>
+                <div class="db-row key" id="row-monitoring-idf"><span class="field-name">🔑 IDF</span></div>
+                <div class="db-row key" id="row-monitoring-period"><span class="field-name">🔑 період</span></div>
+                <div class="db-row"><span>коротка назва</span></div>
+                <div class="db-row"><span>тип точки</span></div>
+                <div class="db-row"><span>Наявність ІС</span></div>
+                <div class="db-row"><span>Кількість наданих послуг</span></div>
+                <div class="db-row"><span>Загальна кількість впроваджених послуг</span></div>
+                <div class="db-row"><span>Загальна кількість послуг згідно 1226</span></div>
+                <div class="db-row"><span>норма 1226</span></div>
             </div>
         </div>
 
@@ -301,7 +301,7 @@
             <button class="close-btn" onclick="closeDrawer()">✕</button>
         </div>
         <div>
-            <div class="drawer-section-title">Фактичний вигляд даних (Зразок з таблиці)</div>
+            <div class="drawer-section-title">Фактичний вигляд даних у БД (Зразок з таблиці)</div>
             <div id="drawer-preview-content"></div>
         </div>
     </div>
@@ -334,7 +334,7 @@
             },
             monitoring: {
                 title: "Деталі таблиці: Статичний моніторинг (static_agg)",
-                previewHeaders: ["COD громади", "IDF", "період", "коротка назва", "тип точки", "Наявність ІС", "Кількість наданих послуг", "Впроваджено", "Послуг 1226", "Норма 1226"],
+                previewHeaders: ["hromada_cod", "idf", "period", "short_name", "point_type", "has_is", "services_provided", "services_implemented", "services_1226", "norm_1226"],
                 previewRows: [
                     ["UA46040110000093394", "SN25000022", "2026-Q1", "ЦНАП Броварської міської ради", "ЦНАП", "так", "37000", "350", "375", "410"],
                     ["UA46040110000093395", "SN23000002", "2026-Q1", "Мобільний ЦНАП №1", "Мобільний ЦНАП", "ні", "105", "18", "20", "-"]

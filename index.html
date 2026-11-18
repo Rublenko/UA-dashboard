@@ -246,7 +246,7 @@
         </div>
 
         <div class="db-card" id="card-monitoring" onclick="selectCard('monitoring')">
-            <div class="db-header">📊 Статичний моніторинг</div>
+            <div class="db-header">📊 Статичний моніторинг (static_agg)</div>
             <div class="db-rows">
                 <div class="db-row key" id="row-monitoring-cod"><span class="field-name">🔑 COD громади</span></div>
                 <div class="db-row key" id="row-monitoring-idf"><span class="field-name">🔑 IDF</span></div>
@@ -273,7 +273,7 @@
         </div>
 
         <div class="db-card" id="card-transactions" onclick="selectCard('transactions')">
-            <div class="db-header">⚡ Динамічний журнал послуг</div>
+            <div class="db-header">⚡ Динамічний журнал послуг (dynamic_agg)</div>
             <div class="db-rows">
                 <div class="db-row key" id="row-tx-idf"><span class="field-name">🔑 IDF</span></div>
                 <div class="db-row key" id="row-tx-create"><span class="field-name">🔑 create (дата)</span></div>
@@ -333,7 +333,7 @@
                 ]
             },
             monitoring: {
-                title: "Деталі таблиці: Статичний моніторинг",
+                title: "Деталі таблиці: Статичний моніторинг (static_agg)",
                 previewHeaders: ["COD громади", "IDF", "період", "коротка назва", "тип точки", "Наявність ІС", "Кількість наданих послуг", "Впроваджено", "Послуг 1226", "Норма 1226"],
                 previewRows: [
                     ["UA46040110000093394", "SN25000022", "2026-Q1", "ЦНАП Броварської міської ради", "ЦНАП", "так", "37000", "350", "375", "410"],
@@ -341,7 +341,7 @@
                 ]
             },
             transactions: {
-                title: "Деталі таблиці: Динамічний журнал послуг (Зв'язок з каталогом по service_id)",
+                title: "Деталі таблиці: Динамічний журнал послуг (dynamic_agg) — Зв'язок з каталогом по service_id",
                 previewHeaders: ["IDF", "create", "service_id", "result", "done_at", "Value"],
                 previewRows: [
                     ["SN25000022", "12 лист 2024", "479", "надано/вчасно", "12 лист 2024", "1"],

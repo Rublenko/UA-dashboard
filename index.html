@@ -245,8 +245,8 @@
             </div>
         </div>
 
-        <div class="db-card" id="card-prebooking" onclick="selectCard('prebooking')">
-            <div class="db-header">📅 Підсистема попереднього запису</div>
+        <div class="db-card published" id="card-prebooking" onclick="selectCard('prebooking')">
+            <div class="db-header">📅 Підсистема попереднього запису (queue)</div>
             <div class="db-rows">
                 <div class="db-row key" id="row-prebooking-idf"><span class="field-name">🔑 IDF</span></div>
                 <div class="db-row key" id="row-prebooking-period"><span class="field-name">🔑 період</span></div>
@@ -273,8 +273,8 @@
             </div>
         </div>
 
-        <div class="db-card" id="card-quality" onclick="selectCard('quality')">
-            <div class="db-header">⭐ Модуль оцінки якості</div>
+        <div class="db-card published" id="card-quality" onclick="selectCard('quality')">
+            <div class="db-header">⭐ Модуль оцінки якості (quality)</div>
             <div class="db-rows">
                 <div class="db-row key" id="row-quality-idf"><span class="field-name">🔑 IDF</span></div>
                 <div class="db-row key" id="row-quality-period"><span class="field-name">🔑 період</span></div>
@@ -321,16 +321,16 @@
     <script>
         const tableDetails = {
             prebooking: {
-                title: "Деталі модуля: Підсистема попереднього запису",
-                previewHeaders: ["IDF", "період", "Зареєстровано", "Завершені", "Скасовані"],
+                title: "Деталі модуля: Підсистема попереднього запису (queue)",
+                previewHeaders: ["idf", "period", "registered", "not_happened", "completed", "cancelled"],
                 previewRows: [
-                    ["SN25000022", "2026-Q1", "5648", "4646", "461"],
-                    ["SN23000002", "2026-Q1", "2858", "1783", "456"]
+                    ["SN25000022", "2026-Q1", "5648", "541", "4646", "461"],
+                    ["SN23000002", "2026-Q1", "2858", "619", "1783", "456"]
                 ]
             },
             quality: {
-                title: "Деталі модуля: Модуль оцінки якості",
-                previewHeaders: ["IDF", "період", "CSI", "NPS", "Кількість відгуків"],
+                title: "Деталі модуля: Модуль оцінки якості (quality)",
+                previewHeaders: ["idf", "period", "csi", "nps", "reviews_count"],
                 previewRows: [
                     ["SN25000022", "2026-Q1", "99,852", "99,3212", "22984"],
                     ["SN23000002", "2026-Q1", "99,1955", "96,9684", "14545"]
@@ -373,104 +373,4 @@
         };
 
         const connections = [
-            { fromRow: 'row-prebooking-idf', toRow: 'row-monitoring-idf', cardFrom: 'card-prebooking', cardTo: 'card-monitoring', route: 'corridor-left' },
-            { fromRow: 'row-prebooking-idf', toRow: 'row-quality-idf', cardFrom: 'card-prebooking', cardTo: 'card-quality', route: 'straight' },
-            { fromRow: 'row-monitoring-idf', toRow: 'row-quality-idf', cardFrom: 'card-monitoring', cardTo: 'card-quality', route: 'straight' },
-            { fromRow: 'row-hromadas-cod', toRow: 'row-monitoring-cod', cardFrom: 'card-hromadas', cardTo: 'card-monitoring', route: 'straight' },
-            { fromRow: 'row-monitoring-idf', toRow: 'row-tx-idf', cardFrom: 'card-monitoring', cardTo: 'card-transactions', route: 'bottom-around-quality' },
-            { fromRow: 'row-services-code', toRow: 'row-tx-service-code', cardFrom: 'card-services', cardTo: 'card-transactions', route: 'corridor-right' }
-        ];
-
-        function drawLines() {
-            const svg = document.getElementById('svg-lines');
-            const workspace = document.getElementById('workspace');
-            const wRect = workspace.getBoundingClientRect();
-            svg.innerHTML = '';
-
-            connections.forEach(conn => {
-                const el1 = document.getElementById(conn.fromRow);
-                const el2 = document.getElementById(conn.toRow);
-                if (!el1 || !el2) return;
-
-                const r1 = el1.getBoundingClientRect();
-                const r2 = el2.getBoundingClientRect();
-
-                const x1 = r1.left - wRect.left;
-                const y1 = r1.top + r1.height / 2 - wRect.top;
-                const x2 = r2.left - wRect.left;
-                const y2 = r2.top + r2.height / 2 - wRect.top;
-
-                let pathData = "";
-
-                if (conn.route === 'corridor-left') {
-                    const corridorX = 365;
-                    pathData = `M ${x1} ${y1} C ${corridorX} ${y1}, ${corridorX} ${y2}, ${x2} ${y2}`;
-                } else if (conn.route === 'corridor-right') {
-                    const rightX1 = r1.right - wRect.left;
-                    const rightX2 = r2.right - wRect.left;
-                    const corridorX = Math.max(rightX1, rightX2) + 35;
-                    pathData = `M ${rightX1} ${y1} C ${corridorX} ${y1}, ${corridorX} ${y2}, ${rightX2} ${y2}`;
-                } else if (conn.route === 'bottom-around-quality') {
-                    const startX = r1.right - wRect.left;
-                    const startY = r1.top + r1.height / 2 - wRect.top;
-                    const endX = r2.left - wRect.left;
-                    const endY = r2.top + r2.height / 2 - wRect.top;
-                    pathData = `M ${startX} ${startY} C ${startX + 180} ${startY + 200}, ${endX - 120} ${endY + 200}, ${endX} ${endY}`;
-                } else {
-                    const straightX1 = r1.right - wRect.left;
-                    const straightX2 = r2.left - wRect.left;
-                    const dx = Math.abs(straightX2 - straightX1) * 0.5;
-                    pathData = `M ${straightX1} ${y1} C ${straightX1 + dx} ${y1}, ${straightX2 - dx} ${y2}, ${straightX2} ${y2}`;
-                }
-
-                const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-                path.setAttribute('d', pathData);
-                path.setAttribute('id', `path-${conn.cardFrom}-${conn.cardTo}-${conn.fromRow}`);
-                svg.appendChild(path);
-            });
-        }
-
-        function selectCard(cardId) {
-            document.querySelectorAll('.db-card').forEach(c => c.classList.remove('active'));
-            document.querySelectorAll('svg.connections-layer path').forEach(p => p.classList.remove('active'));
-
-            const card = document.getElementById(`card-${cardId}`);
-            if (card) card.classList.add('active');
-
-            connections.forEach(conn => {
-                if (conn.cardFrom === `card-${cardId}` || conn.cardTo === `card-${cardId}`) {
-                    const path = document.getElementById(`path-${conn.cardFrom}-${conn.cardTo}-${conn.fromRow}`);
-                    if (path) path.classList.add('active');
-                }
-            });
-
-            const data = tableDetails[cardId];
-            if (!data) return;
-
-            document.getElementById('drawer-title').innerText = data.title;
-
-            let prevHtml = `<table class="detail-table"><thead><tr>`;
-            data.previewHeaders.forEach(h => prevHtml += `<th>${h}</th>`);
-            prevHtml += `</tr></thead><tbody>`;
-            data.previewRows.forEach(row => {
-                prevHtml += `<tr>`;
-                row.forEach(cell => prevHtml += `<td>${cell}</td>`);
-                prevHtml += `</tr>`;
-            });
-            prevHtml += `</tbody></table>`;
-            document.getElementById('drawer-preview-content').innerHTML = prevHtml;
-
-            document.getElementById('info-drawer').classList.add('open');
-        }
-
-        function closeDrawer() {
-            document.getElementById('info-drawer').classList.remove('open');
-            document.querySelectorAll('.db-card').forEach(c => c.classList.remove('active'));
-            document.querySelectorAll('svg.connections-layer path').forEach(p => p.classList.remove('active'));
-        }
-
-        window.addEventListener('load', drawLines);
-        window.addEventListener('resize', drawLines);
-    </script>
-</body>
-</html>
+            { fromRow: 'row-prebooking-idf', toRow: 'row-monitoring-idf', cardFrom: 'card-prebooking', cardTo: 'card-monitoring', route: 'corridor-left
